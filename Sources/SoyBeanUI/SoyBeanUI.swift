@@ -2,7 +2,11 @@
 // https://docs.swift.org/swift-book
 
 public struct SoyBeanUI {
-    public func test() {
+    public init() {
         print("Hello, World!")
+    }
+    
+    public func test() {
+        print("Test 성공!")
     }
 }
