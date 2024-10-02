@@ -1,12 +1,12 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-public struct SoyBeanUI {
+public struct SoyBeanUITest {
     public init() {
-        print("Hello, World!")
+        print("Hello, UI!")
     }
     
     public func test() {
-        print("Test 성공!")
+        print("UI Test 성공!")
     }
 }
