@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  SoyBean
-//
-//  Created by 구태호 on 10/5/24.
-//
-
 import UIKit
 
 extension UIView {
