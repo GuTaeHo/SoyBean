@@ -11,7 +11,7 @@ import Foundation
 
 public extension Optional where Wrapped == String {
     /// nil 일 경우 빈 문자열("") 반환
-    public var toEmptyIfOptional: String {
+    var toEmptyIfOptional: String {
         switch self {
         case .some(let wrapped):
             return wrapped
@@ -22,7 +22,7 @@ public extension Optional where Wrapped == String {
     }
     
     /// 공백일 경우 nil 반환
-    public var toOptionalIfEmpty: String? {
+    var toOptionalIfEmpty: String? {
         switch self {
         case .none:
             return nil

@@ -21,9 +21,9 @@ public extension Array {
     }
 }
 
-extension Array where Element: Hashable {
+public extension Array where Element: Hashable {
     /// 중복값을 제거한 뒤 배열을 반환합니다.
-    func distinct() -> [Element] {
+    func removeDuplicates() -> [Element] {
         let set = Set(self)
         return Array(set)
     }
