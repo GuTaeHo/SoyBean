@@ -17,7 +17,7 @@ public class Util {
         }
     }
     
-    /// 설정 > 찌익 열기
+    /// 설정 > 앱 열기
     public static func openSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url)
