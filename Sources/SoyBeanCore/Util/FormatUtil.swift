@@ -9,7 +9,7 @@ import Foundation
 
 
 public class FormatUtil {
-    enum DateFormat: String {
+    public enum DateFormat: String {
         case MM_Dot_dd = "MM.dd"
     }
     
