@@ -13,7 +13,7 @@ public class FormatUtil {
         case MM_Dot_dd = "MM.dd"
     }
     
-    static func formatDate(_ date: String, to toFormat: DateFormat) throws -> String {
+    public static func formatDate(_ date: String, to toFormat: DateFormat) throws -> String {
         let dateFormatter = DateFormatter.shared
         
         if let date = dateFormatter.date(from: date) {
