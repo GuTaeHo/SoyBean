@@ -36,7 +36,7 @@ let package = Package(
 //                .product(name: "SnapKit", package: "SnapKit"),
 //                .product(name: "Then", package: "Then"),
             ],
-            resources: [.process("Resources")])
-
+            resources: [.process("Resources")]
+        ),
     ]
 )
