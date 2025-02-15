@@ -17,8 +17,8 @@ let package = Package(
     ],
     // 프로젝트에 라이브러리를 추가하기 위해서 아래와 같이 작성
     dependencies: [
-        .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.7.1")),
-        .package(url: "https://github.com/devxoul/Then.git", from: "3.0.0")
+//        .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.7.1")),
+//        .package(url: "https://github.com/devxoul/Then.git", from: "3.0.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,13 +27,13 @@ let package = Package(
         .target(
             name: "SoyBeanCore",
             dependencies: [
-                .product(name: "Then", package: "Then"),
+//                .product(name: "Then", package: "Then"),
             ]),
         .target(
             name: "SoyBeanUI",
             dependencies: [
-                .product(name: "SnapKit", package: "SnapKit"),
-                .product(name: "Then", package: "Then"),
+//                .product(name: "SnapKit", package: "SnapKit"),
+//                .product(name: "Then", package: "Then"),
             ])
 
     ]
