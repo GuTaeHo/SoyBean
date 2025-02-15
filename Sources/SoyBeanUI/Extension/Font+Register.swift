@@ -16,11 +16,17 @@ public enum FontType: String, CaseIterable {
 }
 
 public extension UIFont {
-    static func registerFonts() {
-        FontType.allCases.forEach { font in
+    /// 폰트를 등록합니다.
+    /// - Returns: 등록된 폰트 이름 배열 반환
+    static func registerFonts() -> [String] {
+        FontType.allCases.compactMap { font in
             guard let url = Bundle.module.url(forResource: font.rawValue,
-                                              withExtension: "otf") else { return }
-            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+                                              withExtension: "otf") else { return nil }
+            if CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil) {
+                return font.rawValue
+            } else {
+                return nil
+            }
         }
     }
     
