@@ -18,7 +18,7 @@ public enum FontType: String, CaseIterable {
 public extension UIFont {
     static func registerFonts() {
         FontType.allCases.forEach { font in
-            guard let url = Bundle.main.url(forResource: font.rawValue,
+            guard let url = Bundle.module.url(forResource: font.rawValue,
                                               withExtension: "ttf") else { return }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
