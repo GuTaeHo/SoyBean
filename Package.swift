@@ -28,13 +28,15 @@ let package = Package(
             name: "SoyBeanCore",
             dependencies: [
 //                .product(name: "Then", package: "Then"),
-            ]),
+            ]
+        ),
         .target(
             name: "SoyBeanUI",
             dependencies: [
 //                .product(name: "SnapKit", package: "SnapKit"),
 //                .product(name: "Then", package: "Then"),
-            ])
+            ],
+            resources: [.process("Resources")])
 
     ]
 )
