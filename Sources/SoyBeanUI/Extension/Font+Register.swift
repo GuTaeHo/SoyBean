@@ -19,7 +19,7 @@ public extension UIFont {
     static func registerFonts() {
         FontType.allCases.forEach { font in
             guard let url = Bundle.module.url(forResource: font.rawValue,
-                                              withExtension: "ttf") else { return }
+                                              withExtension: "otf") else { return }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
     }
