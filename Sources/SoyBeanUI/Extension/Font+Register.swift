@@ -8,30 +8,29 @@
 import UIKit
 import SwiftUI
 
-private enum CustomFonts: String, CaseIterable {
-    case pretendardBold = "Pretendard-Bold"
-    case pretendardSemiBold = "Pretendard-SemiBold"
-    case pretendardMedium = "Pretendard-Medium"
-    case pretendardRegular = "Pretendard-Regular"
+public enum FontType: String, CaseIterable {
+    case regular400 = "Pretendard-Regular"
+    case medium500 = "Pretendard-Medium"
+    case semiBold600 = "Pretendard-SemiBold"
+    case bold700 = "Pretendard-Bold"
 }
-
 
 public extension UIFont {
     static func registerFonts() {
-        CustomFonts.allCases.forEach { font in
+        FontType.allCases.forEach { font in
             guard let url = Bundle.main.url(forResource: font.rawValue,
                                               withExtension: "ttf") else { return }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
     }
+    
+    static func custom(type: FontType, size: CGFloat) -> UIFont {
+        return UIFont(name: type.rawValue, size: size) ?? .systemFont(ofSize: size)
+    }
 }
 
 public extension Font {
-    static func registerFonts() {
-        CustomFonts.allCases.forEach { font in
-            guard let url = Bundle.module.url(forResource: font.rawValue,
-                                              withExtension: "ttf") else { return }
-            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
-        }
+    static func custom(_ type: FontType, size: CGFloat) -> Font {
+        return .custom(type.rawValue, fixedSize: size)
     }
 }
