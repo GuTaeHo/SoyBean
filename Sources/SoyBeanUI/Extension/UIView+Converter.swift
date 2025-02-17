@@ -1,3 +1,4 @@
+#if os(iOS)
 import UIKit
 
 public extension UIView {
@@ -9,3 +10,6 @@ public extension UIView {
         self.convert(self.frame.origin, to: targetView)
     }
 }
+#else
+import AppKit
+#endif

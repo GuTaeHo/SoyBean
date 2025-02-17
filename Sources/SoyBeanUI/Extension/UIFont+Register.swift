@@ -5,6 +5,7 @@
 //  Created by 구태호 on 2/15/25.
 //
 
+#if os(iOS)
 import UIKit
 import SwiftUI
 
@@ -41,3 +42,6 @@ public extension Font {
         return .custom(type.rawValue, fixedSize: size)
     }
 }
+
+#elseif os(macOS)
+#endif

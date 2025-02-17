@@ -5,8 +5,8 @@
 //  Created by 구태호 on 2/12/25.
 //
 
+#if os(iOS)
 import UIKit
-
 
 public class Util {
     /// 앱 종료
@@ -57,3 +57,5 @@ public class Util {
         set { UIPasteboard.general.string = newValue }
     }
 }
+#elseif os(macOS)
+#endif
