@@ -1,18 +1,19 @@
 //
-//  UIView+Font.swift
+//  View+Font.swift
 //  SoyBean
 //
 //  Created by 구태호 on 2/15/25.
 //
 
-#if os(iOS)
-import UIKit
 import SwiftUI
 
+#if os(iOS)
+import UIKit
 
 public extension UIView {
     
 }
+#endif
 
 
 public extension View {
@@ -23,6 +24,3 @@ public extension View {
         return self
     }
 }
-
-#elseif os(macOS)
-#endif

@@ -5,6 +5,7 @@
 //  Created by 구태호 on 2/12/25.
 //
 
+
 #if os(iOS)
 import UIKit
 
@@ -50,12 +51,31 @@ public class Util {
             completion?()
         }
     }
-    
+}
+
+public extension Util {
     /// 클립보드 저장
-    public static var clipboard: String? {
+    static var clipboard: String? {
         get { UIPasteboard.general.string.toOptionalIfEmpty }
         set { UIPasteboard.general.string = newValue }
     }
 }
 #elseif os(macOS)
+import AppKit
+
+public class Util {
+    
+}
+
+public extension Util {
+    /// 클립보드 저장
+    static var clipboard: String? {
+        get { NSPasteboard.general.string(forType: .string) }
+        set {
+            let pasteboard = NSPasteboard.general
+            pasteboard.clearContents()
+            pasteboard.setString(newValue ?? "", forType: .string)
+        }
+    }
+}
 #endif

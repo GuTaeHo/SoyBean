@@ -1,5 +1,5 @@
 //
-//  UIFont+Register.swift
+//  Font+.swift
 //  SoyBean
 //
 //  Created by 구태호 on 2/15/25.
@@ -29,6 +29,7 @@ public extension Font {
     static func custom(_ type: FontType, size: CGFloat) -> Font {
         return .custom(type.rawValue, fixedSize: size)
     }
+    
     /// 폰트를 등록합니다.
     /// - Returns: 등록된 폰트 이름 배열 반환
     /// - Important: 앱 진입점에서 호출
