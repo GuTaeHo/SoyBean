@@ -8,10 +8,26 @@
 import SwiftUI
 
 public enum FontType: String, CaseIterable {
-    case regular400 = "Pretendard-Regular"
-    case medium500 = "Pretendard-Medium"
-    case semiBold600 = "Pretendard-SemiBold"
-    case bold700 = "Pretendard-Bold"
+    /// 400, Regular, Pretendard
+    case pretendardRegular = "Pretendard-Regular"
+    /// 500, Medium, Pretendard
+    case pretendardMedium = "Pretendard-Medium"
+    /// 600, SemiBold, Pretendard
+    case pretendardSemiBold = "Pretendard-SemiBold"
+    /// 700, Bold, Pretendard
+    case pretendardBold = "Pretendard-Bold"
+    /// 100, Thin, IBMPlexSansKR
+    case IBMPlexThin = "IBMPlexSansKR-Thin"
+    /// 300, Light, IBMPlexSansKR
+    case IBMPlexLight = "IBMPlexSansKR-Light"
+    /// 400, Regular, IBMPlexSansKR
+    case IBMPlexRegular = "IBMPlexSansKR-Regular"
+    /// 500, Medium, IBMPlexSansKR
+    case IBMPlexMedium = "IBMPlexSansKR-Medium"
+    /// 600, SemiBold, IBMPlexSansKR
+    case IBMPlexSemiBold = "IBMPlexSansKR-SemiBold"
+    /// 700, Bold, IBMPlexSansKR
+    case IBMPlexBold = "IBMPlexSansKR-Bold"
 }
 
 #if os(iOS)
