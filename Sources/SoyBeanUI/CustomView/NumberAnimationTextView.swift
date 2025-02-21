@@ -11,7 +11,11 @@ import SwiftUI
 /// 애니메이션이 적용된 TextView
 /// - Note: iOS 16 이상부터 애니메이션 적용
 public struct NumberAnimationTextView: View {
-    @Binding public var number: Int
+    @Binding var number: Int
+    
+    public init(number: Int) {
+        self._number = .constant(number)
+    }
     
     public var body: some View {
         if #available(iOS 16.0, macOS 13.0, *) {
@@ -30,5 +34,5 @@ public struct NumberAnimationTextView: View {
 }
 
 #Preview {
-    NumberAnimationTextView(number: .constant(1010))
+    NumberAnimationTextView(number: 1000)
 }
