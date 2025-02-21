@@ -15,7 +15,7 @@ import UIKit
 public extension AttributedString {
     /// 속성이 지정된 문자열을 반환합니다.
     static func styledText(_ text: String,
-                           fontType: Font.FontType,
+                           fontType: FontType,
                            fontSize: CGFloat,
                            fontColor: UIColor = .white,
                            textAlignment: NSTextAlignment = .left) -> AttributedString {
@@ -23,7 +23,7 @@ public extension AttributedString {
         paragraphStyle.alignment = textAlignment
         
         let attr: [NSAttributedString.Key : Any] = [
-            .font: Font.custom(fontType, size: fontSize).toUIFont,
+            .font: UIFont.custom(type: fontType, size: fontSize),
             .foregroundColor: fontColor,
             .paragraphStyle: paragraphStyle
         ]
