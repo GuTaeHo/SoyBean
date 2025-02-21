@@ -11,7 +11,7 @@ import SwiftUI
 /// 애니메이션이 적용된 TextView
 /// - Note: iOS 16 이상부터 애니메이션 적용
 public struct NumberAnimationTextView: View {
-    @Binding var number: Int
+    @Binding public var number: Int
     
     public var body: some View {
         if #available(iOS 16.0, macOS 13.0, *) {
