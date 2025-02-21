@@ -5,6 +5,8 @@
 //  Created by 구태호 on 2/12/25.
 //
 
+import SoyBeanCore
+
 
 #if os(iOS)
 import UIKit
