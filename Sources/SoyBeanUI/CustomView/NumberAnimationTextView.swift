@@ -29,7 +29,7 @@ public struct NumberAnimationTextView: View {
     @ViewBuilder
     var numberText: some View {
         Text("\(number)")
-            .font(.custom(.bold700, size: 30))
+            .font(.custom(.IBMPlexBold, size: 30))
     }
 }
 
