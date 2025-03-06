@@ -12,6 +12,7 @@ import SoyBeanCore
 public class FormatUtil {
     public enum DateFormat: String {
         case MM_Dot_dd = "MM.dd"
+        case yy_Dot_MM_Dot_dd = "yy.MM.dd"
     }
     
     public static func formatDate(_ date: String, to toFormat: DateFormat) throws -> String {
