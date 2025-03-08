@@ -5,6 +5,32 @@
 //  Created by 구태호 on 2/30/25.
 //
 
+import SwiftUI
+import SoyBeanCore
+
+extension View {
+    
+    /**
+     뷰 흔들기
+     
+     - Parameters:
+        - amount: 좌, 우 흔들림 정도
+     
+     ```swift
+     // 사용방법
+     
+     @State var isShake: Bool = false
+     
+     Button("Hello")
+     .shake(amount: isShake ? 20 : 0)
+     ```
+     */
+    func shake(amount: Double = 10.0) -> some View {
+        self.modifier(ShakeEffect(amount: CGFloat(amount)))
+    }
+}
+
+
 #if os(iOS)
 import UIKit
 
@@ -47,6 +73,24 @@ public extension UIView {
             self.isHidden = false
             self.alpha = 1
         }
+    }
+    
+    /// 뷰 흔들기
+    /// - Parameters:
+    ///     - duration: 지속 시간 (기본값: 0.05)
+    ///     - repeatCount: 반복 횟수 (기본값: 2)
+    ///     - from: 시작 지점 (기본값: 5)
+    ///     - to: 끝 지점 (기본값: 5)
+    func shake(duration: CGFloat = 0.05, repeatCount: Float = 2, from: CGFloat = 5, to: CGFloat = 5) {
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = duration
+        animation.repeatCount = repeatCount
+        animation.autoreverses = true
+        animation.fromValue = NSValue(cgPoint: CGPoint(x: self.center.x - from, y: self.center.y))
+        animation.toValue = NSValue(cgPoint: CGPoint(x: self.center.x + to, y: self.center.y))
+        self.layer.add(animation, forKey: "position")
+        
+        HapticManager.shared.start(.notification(.error))
     }
 }
 
