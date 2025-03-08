@@ -20,14 +20,4 @@ public extension Optional where Wrapped == String {
             return ""
         }
     }
-    
-    /// 공백일 경우 nil 반환
-    var toOptionalIfEmpty: String? {
-        switch self {
-        case .none:
-            return nil
-        case .some(let wrapped):
-            return wrapped.isEmpty ? nil : wrapped
-        }
-    }
 }

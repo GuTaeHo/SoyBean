@@ -58,7 +58,7 @@ public class Util {
 public extension Util {
     /// 클립보드 저장
     static var clipboard: String? {
-        get { UIPasteboard.general.string.toOptionalIfEmpty }
+        get { UIPasteboard.general.string?.toOptionalIfEmpty }
         set { UIPasteboard.general.string = newValue }
     }
 }

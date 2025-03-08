@@ -12,8 +12,10 @@ import SwiftUI
 /// - Note: iOS 16 이상부터 애니메이션 적용
 public struct NumberAnimationTextView: View {
     @Binding var number: Int
+    @Binding var font: Font
     
-    public init(number: Int) {
+    public init(font: Font, number: Int) {
+        self._font = .constant(font)
         self._number = .constant(number)
     }
     
@@ -29,10 +31,11 @@ public struct NumberAnimationTextView: View {
     @ViewBuilder
     var numberText: some View {
         Text("\(number)")
-            .font(.custom(.IBMPlexBold, size: 30))
+            .font(font)
     }
 }
 
 #Preview {
-    NumberAnimationTextView(number: 1000)
+    NumberAnimationTextView(font: .custom(.IBMPlexThin, size: 30),
+                            number: 1000)
 }
