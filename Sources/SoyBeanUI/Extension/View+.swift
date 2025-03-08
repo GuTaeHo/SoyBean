@@ -8,7 +8,7 @@
 import SwiftUI
 import SoyBeanCore
 
-extension View {
+public extension View {
     
     /**
      뷰 흔들기
