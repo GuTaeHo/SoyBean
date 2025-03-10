@@ -57,6 +57,7 @@ public extension Font {
         return .custom(type.rawValue, fixedSize: size)
     }
     
+    @discardableResult
     /// 폰트를 등록합니다.
     /// - Returns: 등록된 폰트 이름 배열 반환
     /// - Important: 앱 진입점에서 호출
