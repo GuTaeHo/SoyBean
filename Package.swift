@@ -31,15 +31,14 @@ let package = Package(
         .target(
             name: "SoyBeanUI",
             dependencies: [
-//                .product(name: "SnapKit", package: "SnapKit"),
-//                .product(name: "Then", package: "Then"),
+                "SoyBeanCore",
             ],
             resources: [.process("Resources")]
         ),
         .target(
             name: "SoyBeanUtil",
             dependencies: [
-                "SoyBeanCore"
+                "SoyBeanCore",
             ]
         )
     ]
