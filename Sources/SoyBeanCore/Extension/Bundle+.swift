@@ -28,4 +28,12 @@ public extension Bundle {
         }
         #endif
     }
+    
+    var appBundleID: String { Bundle.main.bundleIdentifier ?? "" }
+    
+    var appName: String { Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String ?? "" }
+    
+    var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
+    
+    var appBuildNumber: String { Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "" }
 }
