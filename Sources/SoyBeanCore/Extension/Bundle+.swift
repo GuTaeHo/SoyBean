@@ -14,7 +14,7 @@ public extension Bundle {
         case testFlight
         case appStore
         
-        var name: String {
+        public var name: String {
             switch self {
             case .direct:
                 return "직접설치"
