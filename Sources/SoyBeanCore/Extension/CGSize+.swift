@@ -8,7 +8,7 @@
 import Foundation
 
 
-extension CGSize {
+public extension CGSize {
     static func + (lhs: Self, rhs: Self) -> Self {
         CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
     }
