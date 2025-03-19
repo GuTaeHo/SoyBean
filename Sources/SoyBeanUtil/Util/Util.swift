@@ -32,13 +32,13 @@ public class Util {
         let url = url.trimmingCharacters(in: .whitespacesAndNewlines)
         
         guard let url = URL(string: url) else {
-            throw DomainError.invalidURL
+            throw SoyBeanError.invalidURL
         }
         
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:])
         } else {
-            throw DomainError.externalAppOpenError
+            throw SoyBeanError.externalAppOpenError
         }
     }
     

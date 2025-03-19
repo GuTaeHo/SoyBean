@@ -1,5 +1,5 @@
 //
-//  DomainError.swift
+//  SoyBeanError.swift
 //  SoyBean
 //
 //  Created by 구태호 on 2/12/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum DomainError: LocalizedError {
+public enum SoyBeanError: LocalizedError {
     case message(String)
     case invalidURL
     case externalAppOpenError

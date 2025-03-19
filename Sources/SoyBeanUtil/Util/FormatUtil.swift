@@ -23,6 +23,6 @@ public class FormatUtil {
             return dateFormatter.string(from: date)
         }
         
-        throw DomainError.dateFormattingError(format: toFormat.rawValue)
+        throw SoyBeanError.dateFormattingError(format: toFormat.rawValue)
     }
 }
