@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "SoyBean",
-    platforms: [.iOS(.v15), .macOS(.v12)],
+    platforms: [.iOS(.v15), .macOS(.v12), .watchOS(.v8)],
     products: [
         .library(
             name: "SoyBeanCore",

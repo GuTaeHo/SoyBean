@@ -9,7 +9,7 @@ import SwiftUI
 
 
 /// 애니메이션이 적용된 TextView
-/// - Note: iOS 16 이상부터 애니메이션 적용
+/// - Note: iOS 16, macOS 13.0, watchOS 9.0 이상부터 애니메이션 적용
 public struct NumberAnimationTextView: View {
     @Binding var number: Int
     @Binding var font: Font
@@ -20,7 +20,7 @@ public struct NumberAnimationTextView: View {
     }
     
     public var body: some View {
-        if #available(iOS 16.0, macOS 13.0, *) {
+        if #available(iOS 16.0, macOS 13.0, watchOS 9.0, *) {
             numberText
                 .contentTransition(.numericText())
         } else {
