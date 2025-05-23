@@ -8,7 +8,7 @@
 import Foundation
 
 
-extension Data {
+public extension Data {
     /// Data 를 Dictionary 형태로 변환
     /// - Important: Data 는 반드시 **JSON 포맷** 을 준수해야함
     var toJSONDictionary: [String : Any]? {
