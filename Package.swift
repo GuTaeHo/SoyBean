@@ -18,14 +18,11 @@ let package = Package(
             targets: ["SoyBeanUtil"]),
     ],
     dependencies: [
-//        .package(url: "https://github.com/SnapKit/SnapKit.git", .upToNextMajor(from: "5.7.1")),
-//        .package(url: "https://github.com/devxoul/Then.git", from: "3.0.0")
     ],
     targets: [
         .target(
             name: "SoyBeanCore",
             dependencies: [
-//                .product(name: "Then", package: "Then"),
             ]
         ),
         .target(
@@ -39,6 +36,13 @@ let package = Package(
             name: "SoyBeanUtil",
             dependencies: [
                 "SoyBeanCore",
+            ]
+        ),
+        .testTarget(
+            name: "SoyBeanTests",
+            dependencies: [
+                "SoyBeanCore",
+                "SoyBeanUtil",
             ]
         )
     ]
