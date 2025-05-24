@@ -9,10 +9,11 @@ let package = Package(
     products: [
         // 여러 product 를 한번에 사용해야하는 경우, `import SoyBean`
         .library(name: "SoyBean",
-                 targets: ["SoyBeanCore",
-                           "SoyBeanUI",
-                           "SoyBeanUtil",
-                          ]),
+                 targets: [
+                    "SoyBeanCore",
+                    "SoyBeanUI",
+                    "SoyBeanUtil",
+                ]),
         .library(
             name: "SoyBeanCore",
             targets: ["SoyBeanCore"]),
@@ -26,6 +27,14 @@ let package = Package(
     dependencies: [
     ],
     targets: [
+        .target(
+            name: "SoyBean",
+            dependencies: [
+                "SoyBeanCore",
+                "SoyBeanUI",
+                "SoyBeanUtil",
+            ]
+        ),
         .target(
             name: "SoyBeanCore",
             dependencies: [
