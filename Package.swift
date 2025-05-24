@@ -7,6 +7,12 @@ let package = Package(
     name: "SoyBean",
     platforms: [.iOS(.v15), .macOS(.v12), .watchOS(.v8)],
     products: [
+        // 여러 product 를 한번에 사용해야하는 경우, `import SoyBean`
+        .library(name: "SoyBean",
+                 targets: ["SoyBeanCore",
+                           "SoyBeanUI",
+                           "SoyBeanUtil",
+                          ]),
         .library(
             name: "SoyBeanCore",
             targets: ["SoyBeanCore"]),
