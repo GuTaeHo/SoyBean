@@ -9,7 +9,7 @@ let package = Package(
     products: [
         // 여러 product 를 한번에 사용해야하는 경우, `import SoyBean`
         .library(name: "SoyBean",
-                 targets: [ "SoyBean"]),
+                 targets: ["SoyBean"]),
         .library(
             name: "SoyBeanCore",
             targets: ["SoyBeanCore"]),

@@ -5,6 +5,30 @@
 <br>
 <br>
 
+## SoyBean
+`Core`, `UI`, `Util` 을 모두 포함하고 있는 모듈
+
+한번의 import 로 여러 모듈을 사용할 수 있음
+
+**예시**
+
+- 기존
+
+```
+import SoyBeanCore
+import SoyBeanUI
+import SoyBeanUtil
+```
+
+-  
+
+```swift
+import SoyBean
+``` 
+
+<br>
+<br>
+
 ## SoyBeanCore
 공통되면서 핵심적인 로직을 담고있는 모듈
 
