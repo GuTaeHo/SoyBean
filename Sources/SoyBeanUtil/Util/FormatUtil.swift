@@ -15,14 +15,20 @@ public class FormatUtil {
         case yy_Dot_MM_Dot_dd = "yy.MM.dd"
     }
     
-    public static func formatDate(_ date: String, to toFormat: DateFormat) throws -> String {
-        let dateFormatter = DateFormatter.shared
+    /// `format` 형식에 맞춰 String 날짜를 반환합니다
+    /// - Parameters:
+    ///   - date: 변환되기 전 `String` 형태의 날짜
+    ///   - format: 변환될 포맷
+    /// - Returns: `format` 에 맞게 변환된 `String` 형태의 날짜
+    /// - Important: 이 메소드는 호출마다 `DateFormatter()` 를 새로 생성합니다.
+    public static func formatDate(_ date: String, to format: DateFormat) throws -> String {
+        let dateFormatter = DateFormatter()
         
         if let date = dateFormatter.date(from: date) {
-            dateFormatter.dateFormat = toFormat.rawValue
+            dateFormatter.dateFormat = format.rawValue
             return dateFormatter.string(from: date)
         }
         
-        throw SoyBeanError.dateFormattingError(format: toFormat.rawValue)
+        throw SoyBeanError.dateFormattingError(format: format.rawValue)
     }
 }
