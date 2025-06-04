@@ -8,12 +8,12 @@
 ## 설치방법
 
 ```
-Xcode -> File -> Add Package Dependencies -> 
-검색 란에 "https://github.com/GuTaeHo/SoyBean.git" 입력 -> 
-Add Package -> 원하는 모듈과 적용될 타겟 설정 후 Add Package
+Xcode > File > Add Package Dependencies > 
+검색 란에 "https://github.com/GuTaeHo/SoyBean.git" 입력 > 
+Add Package > 원하는 모듈과 적용될 타겟 설정 후 Add Package
 ```
 
-하위 모듈을 전부 포함할 경우 `SoyBean` 모듈만 Add Package 시에도 정상 동작
+하위 모듈을 전부 사용해야하는 경우 `SoyBean` 모듈만 추가해도 정상 동작
 
 <img src="./Images/img_demo_installation1.png" width="75%">
 
@@ -23,7 +23,8 @@ Add Package -> 원하는 모듈과 적용될 타겟 설정 후 Add Package
 
 ## 모듈간 의존성
 
-// TODO: 이미지 추가
+<img src="./Images/img_package_dependency.png" width="75%">
+
 
 </br>
 </br>
@@ -34,7 +35,7 @@ Add Package -> 원하는 모듈과 적용될 타겟 설정 후 Add Package
 
 `Core`, `UI`, `Util` 을 모두 포함하고 있는 모듈
 
-한번의 import 로 여러 모듈을 사용할 수 있음
+한번의 import 로 여러 모듈을 사용할 수 있다
 
 </br>
 
@@ -73,7 +74,7 @@ Foundation 및 Swift 표준 라이브러리의 기존 타입(Date, String, Array
 Haptic 및 Push Notification 등 앱 전체에서 사용되는 싱글톤 매니저 구현
 
 - Logger
-Debug 빌드에서만 출력하는 정적 로깅 메서드 구현
+Debug 빌드에서만 콘솔에 출력하는 로깅 메서드 구현
 
 <br>
 <br>
@@ -87,7 +88,7 @@ Debug 빌드에서만 출력하는 정적 로깅 메서드 구현
 - CustomView  
 UIKit 또는 SwiftUI 의 뷰를 커스텀한 구현체 또는 지원되지않는 뷰 구현
 - Extension  
-UIKit 과 SwiftUI 의 기존 타입(UIView, View ...)를 확장한 extension
+UIKit 과 SwiftUI 의 기존 타입(UIView, UIColor, View ...)을 확장한 extension
 
 
 <br>
