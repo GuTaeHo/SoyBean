@@ -1,6 +1,6 @@
 # SoyBean
 
-반복적으로 사용되는 기능을 Swift Package 형태로 제공
+포맷 변환, 정규식 체크, 로거 등 반복적으로 사용되는 기능을 제공하는 패키지
 
 </br>
 </br>
@@ -14,6 +14,16 @@ Add Package -> 원하는 모듈과 적용될 타겟 설정 후 Add Package
 ```
 
 하위 모듈을 전부 포함할 경우 `SoyBean` 모듈만 Add Package 시에도 정상 동작
+
+<img src="./Images/img_demo_installation1.png" width="75%">
+
+</br>
+</br>
+
+
+## 모듈간 의존성
+
+// TODO: 이미지 추가
 
 </br>
 </br>
