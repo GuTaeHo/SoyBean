@@ -84,8 +84,12 @@ Debug 빌드에서만 콘솔에 출력하는 로깅 메서드 구현
 
 - CustomView  
 UIKit 또는 SwiftUI 의 뷰를 커스텀한 구현체 또는 지원되지않는 뷰 구현
+
 - Extension  
 UIKit 과 SwiftUI 의 기존 타입(UIView, UIColor, View ...)을 확장한 extension
+
+- Manager  
+Haptic 기능을 제공하는 싱글톤 매니저 구현
 
 
 <br>
