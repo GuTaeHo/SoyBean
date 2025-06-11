@@ -1,5 +1,5 @@
 //
-//  Util.swift
+//  AppUtil.swift
 //  SoyBean
 //
 //  Created by 구태호 on 2/12/25.
@@ -11,7 +11,7 @@ import SoyBeanCore
 #if os(iOS)
 import UIKit
 
-public class Util {
+public class AppUtil {
     /// 앱 종료
     public static func exitApp() {
         UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
@@ -55,7 +55,7 @@ public class Util {
     }
 }
 
-public extension Util {
+public extension AppUtil {
     /// 클립보드 저장
     static var clipboard: String? {
         get { UIPasteboard.general.string?.toOptionalIfEmpty }

@@ -70,9 +70,6 @@ import SoyBean
 - Extension  
 Foundation 및 Swift 표준 라이브러리의 기존 타입(Date, String, Array ...)을 확장한 extension 구현
 
-- Manager
-Haptic 및 Push Notification 등 앱 전체에서 사용되는 싱글톤 매니저 구현
-
 - Logger
 Debug 빌드에서만 콘솔에 출력하는 로깅 메서드 구현
 
@@ -95,7 +92,10 @@ UIKit 과 SwiftUI 의 기존 타입(UIView, UIColor, View ...)을 확장한 exte
 <br>
 
 ### SoyBeanUtil
-포맷 변환, 정규식 체크, 클립보드 등 유용한 유틸 클래스 구현
+포맷 변환, 정규식 체크, 클립보드 와 키체인 등 유용한 유틸 클래스 구현
 
 - Util  
 날짜 및 시간 포맷 변환, 정규식 처리 또는 인코딩 및 디코딩, 클립보드나 외부 앱 접근 등의 유틸리티 정적 메소드 구현
+
+- Manager  
+Haptic 및 Keychain 기능을 제공하는 싱글톤 매니저 구현
