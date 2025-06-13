@@ -23,7 +23,31 @@ Add Package > 원하는 모듈과 적용될 타겟 설정 후 Add Package
 
 ## 모듈간 의존성
 
-<img src="./Images/img_package_dependency.png" width="75%">
+</br>
+
+```mermaid
+classDiagram
+    SoyBeanCore <|-- SoyBeanUI
+    SoyBeanCore <|-- SoyBeanUtil
+    class SoyBeanCore {
+        공통되면서 핵심적인 로직을 담고있는 모듈
+        - Error()
+        - Extension()
+        - Logger()
+    }
+    class SoyBeanUI {
+        공통적으로 사용되는 UI 컴포넌트를 담고있는 모듈
+        - CustomView()
+        - Extension()
+        - Manager()
+    }
+    class SoyBeanUtil {
+        포맷 변환, 정규식 체크, 클립보드 와 키체인 등 유용한 유틸 클래스 구현
+        - Util()
+        - Manager()
+    }
+
+```
 
 
 </br>
