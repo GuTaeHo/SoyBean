@@ -1,53 +1,22 @@
 //
-//  View+.swift
+//  UIView+.swift
 //  SoyBean
 //
-//  Created by 구태호 on 2/30/25.
+//  Created by 구태호 on 6/16/25.
 //
-
-import SwiftUI
-import SoyBeanCore
-
-public extension View {
-    
-    /**
-     뷰 흔들기
-     
-     - Parameters:
-     - amount: 좌, 우 흔들림 정도
-     
-     ```swift
-     // 사용방법
-     
-     @State var isShake: Bool = false
-     
-     Button("Hello")
-     .shake(amount: isShake ? 20 : 0)
-     ```
-     */
-    func shake(amount: Double = 10.0) -> some View {
-        self.modifier(ShakeEffect(amount: CGFloat(amount)))
-    }
-}
-
-
-// MARK: - View Modifier
-public extension View {
-    
-    /// 텍스트 스타일 지정
-    /// - Note: 먼저 Font.registerFonts() 를 호출해, 폰트 등록
-    func textStyle(fontType: FontType,
-                   fontSize: CGFloat,
-                   color: Color) -> some View {
-        modifier(TextViewModifier(font: .custom(fontType,
-                                                size: fontSize),
-                                  color: color))
-    }
-}
-
 
 #if os(iOS)
 import UIKit
+
+public extension UIView {
+    /// 뷰의 프레임 원점 좌표를 지정된 타겟 뷰의 좌표계로 변환합니다.
+    ///
+    /// - Parameter targetView: 좌표계를 변환할 대상 뷰.
+    /// - Returns: `targetView`의 좌표계로 변환된 뷰의 원점 좌표를 나타내는 `CGPoint`.
+    func convert(to targetView: UIView) -> CGPoint {
+        self.convert(self.frame.origin, to: targetView)
+    }
+}
 
 
 public extension UIView {
@@ -150,5 +119,4 @@ public extension UIView {
         }
     }
 }
-
 #endif

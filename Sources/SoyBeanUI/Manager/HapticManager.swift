@@ -6,9 +6,15 @@
 //
 
 
+#if os(iOS)
 import UIKit
 
 
+/**
+ 햅틱 피드백을 관리하고 발생시키는 매니저.
+ 
+ - Important: 이 클래스는 iOS 플랫폼에서만 사용가능
+ */
 public final class HapticManager {
     public static let shared = HapticManager()
     
@@ -42,3 +48,4 @@ public final class HapticManager {
         
     }
 }
+#endif

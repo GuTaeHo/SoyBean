@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-#if os(iOS)
-import UIKit
-
-public extension UIView {
-    
-}
-#endif
-
 
 public extension View {
     /// 프리뷰를 위한 커스텀 폰트를 로딩합니다

@@ -1,11 +1,10 @@
 //
-//  StackView.swift
+//  UIStackView+.swift
 //  SoyBean
 //
-//  Created by 구태호 on 2/19/25.
+//  Created by 구태호 on 6/16/25.
 //
 
-import SwiftUI
 #if os(iOS)
 import UIKit
 
@@ -50,6 +49,5 @@ public extension UIStackView {
         }
     }
 }
-#else
-import AppKit
+
 #endif
