@@ -10,9 +10,21 @@ import SoyBeanCore
 
 
 public class FormatUtil {
-    public enum DateFormat: String {
-        case MM_Dot_dd = "MM.dd"
-        case yy_Dot_MM_Dot_dd = "yy.MM.dd"
+    public enum DateFormat {
+        case MM_Dot_dd
+        case yy_Dot_MM_Dot_dd
+        case custom(String)
+        
+        var toFormat: String {
+            switch self {
+            case .MM_Dot_dd:
+                return "MM.dd"
+            case .yy_Dot_MM_Dot_dd:
+                return "yy.MM.dd"
+            case .custom(let format):
+                return format
+            }
+        }
     }
     
     /// `format` 형식에 맞춰 String 날짜를 반환합니다
@@ -26,10 +38,10 @@ public class FormatUtil {
         
         if let date = baseFormatter.date(from: date) {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = format.rawValue
+            dateFormatter.dateFormat = format.toFormat
             return dateFormatter.string(from: date)
         }
         
-        throw SoyBeanError.dateFormattingError(format: format.rawValue)
+        throw SoyBeanError.dateFormattingError(format: format.toFormat)
     }
 }
