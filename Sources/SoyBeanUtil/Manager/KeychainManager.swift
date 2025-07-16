@@ -45,7 +45,7 @@ public final class KeychainManager {
     // 키체인 조회
     /// - Parameters:
     ///     - groupAt: 키체인 공유 그룹 ID (타겟의 KeyChain Sharing 기능이 활성화 되어있어야 함)
-    public func load<T: Codable>(_ value: T, forKey key: String, groupAt group: String? = nil) -> T? {
+    public func load<T: Codable>(_ value: T.Type, forKey key: String, groupAt group: String? = nil) -> T? {
         var query: [String: Any] = [
             kSecClass as String       : kSecClassGenericPassword,
             kSecAttrAccount as String : key,
