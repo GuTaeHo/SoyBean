@@ -8,7 +8,7 @@
 import Foundation
 
 
-protocol UserDefaultsMigratable {
+public protocol UserDefaultsMigratable {
     associatedtype KeyType: RawRepresentable & CaseIterable where KeyType.RawValue == String
     
     /// 사용중인 모든 키 반환
@@ -22,8 +22,8 @@ protocol UserDefaultsMigratable {
     func migrate(to miratableUserDefaults: any UserDefaultsMigratable)
 }
 
-extension UserDefaultsMigratable {
-    public func migrate(to miratableUserDefaults: any UserDefaultsMigratable) {
+public extension UserDefaultsMigratable {
+    func migrate(to miratableUserDefaults: any UserDefaultsMigratable) {
         for key in self.allKeys {
             if let value = standard.object(forKey: key) {
                 miratableUserDefaults.standard.set(value, forKey: key)
