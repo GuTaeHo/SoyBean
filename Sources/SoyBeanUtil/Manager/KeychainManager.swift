@@ -148,4 +148,36 @@ public final class KeychainManager {
         
         return items
     }
+    
+    /// 일괄삭제
+    /// - Parameters:
+    ///     - groupAt: 키체인 공유 그룹 ID (타겟의 KeyChain Sharing 기능이 활성화 되어있어야 함)
+    @discardableResult
+    public func deleteAll(groupAt group: String? = nil) -> Bool {
+        var isAllSucceeded = true
+        
+        let itemClasses: [CFString] = [
+            kSecClassGenericPassword,
+            kSecClassInternetPassword,
+            kSecClassCertificate,
+            kSecClassKey,
+            kSecClassIdentity
+        ]
+
+        for itemClass in itemClasses {
+            var query: [String: Any] = [kSecClass as String : itemClass]
+            
+            if let group = group?.toOptionalIfEmpty {
+                query.updateValue(group, forKey: kSecAttrAccessGroup as String)
+            }
+            
+            let status = SecItemDelete(query as CFDictionary)
+
+            if status != errSecSuccess, status != errSecItemNotFound {
+                isAllSucceeded = false
+            }
+        }
+        
+        return isAllSucceeded
+    }
 }
