@@ -26,7 +26,7 @@ public final class KeychainManager {
             return false
         }
         
-        delete(forKey: key)
+        delete(forKey: key, groupAt: group)
         
         var query: [String: Any] = [
             kSecClass as String       : kSecClassGenericPassword,
