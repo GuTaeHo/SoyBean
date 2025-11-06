@@ -56,9 +56,16 @@ public class AppUtil {
 }
 
 public extension AppUtil {
-    /// 클립보드 저장
+    /// 클립보드 저장 & 불러오기
+    /// - Important: 클립보드에 문자열이 있을 때만 문자열을 반환
     static var clipboard: String? {
-        get { UIPasteboard.general.string?.toOptionalIfEmpty }
+        get {
+            if UIPasteboard.general.hasStrings {
+                return UIPasteboard.general.string?.toOptionalIfEmpty
+            } else {
+                return nil
+            }
+        }
         set { UIPasteboard.general.string = newValue }
     }
 }
