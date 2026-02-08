@@ -38,9 +38,11 @@ public extension View {
     /// - Note: 먼저 Font.registerFonts() 를 호출해, 폰트 등록
     func textStyle(fontType: FontType,
                    fontSize: CGFloat,
-                   color: Color) -> some View {
+                   color: Color,
+                   alignment: TextAlignment = .leading) -> some View {
         modifier(TextViewModifier(font: .custom(fontType,
                                                 size: fontSize),
-                                  color: color))
+                                  color: color,
+                                  alignment: alignment))
     }
 }
