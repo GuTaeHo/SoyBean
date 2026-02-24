@@ -14,6 +14,12 @@ public extension String {
         self.isEmpty ? nil : self
     }
     
+    /// 빈 문자열 체크
+    /// - Returns: 줄 바꿈 및 공백만 포함되었을 때 `true` 반환
+    var isBlank: Bool {
+        trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     /// `JSON` 형태의 포맷으로 변환
     var toPrettyJSON:  String {
         if let data = self.data(using: .utf8) {
