@@ -27,6 +27,17 @@ public class FormatUtil {
         }
     }
     
+    /// 현재 시각을 문자열로 반환합니다
+    ///
+    /// - Returns: 현재 시각을 "yyyy-MM-dd HH:mm:ss" 형태로 포맷한 문자열
+    ///   예시: "2026-02-24 15:30:05"
+    public static func currentDate() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US_POSIX") // 기기 locale 영향 방지
+        return formatter.string(from: Date())
+    }
+    
     /// `format` 형식에 맞춰 String 날짜를 반환합니다
     /// - Parameters:
     ///   - date: 변환되기 전 `"yyyy-MM-dd HH:mm:ss"` 형태의 날짜
