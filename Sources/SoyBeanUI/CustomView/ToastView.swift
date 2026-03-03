@@ -21,6 +21,15 @@ public enum ToastDuration {
     }
 }
 
+// MARK: - Toast Type
+
+public enum ToastType {
+    /// 성공/완료 등 긍정적인 피드백 → .success 햅틱
+    case positive
+    /// 오류/경고 등 부정적인 피드백 → .error 햅틱 + 좌우 흔들림
+    case negative
+}
+
 // MARK: - ToastView
 
 public final class ToastView: UIView {
@@ -82,6 +91,17 @@ public final class ToastView: UIView {
         layer.cornerRadius = bounds.height / 2
         layer.masksToBounds = true
     }
+
+    // MARK: - Shake Animation
+
+    /// 토스트를 좌우로 흔드는 애니메이션
+    func shake() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.45
+        animation.values = [0, -10, 10, -8, 8, -5, 5, 0]
+        layer.add(animation, forKey: "shake")
+    }
 }
 
 // MARK: - ToastKeyboardObserver
@@ -126,7 +146,7 @@ final class ToastKeyboardObserver {
 // TopToastPresenter 인스턴스를 강한 참조로 유지 (dismiss 완료까지 해제 방지)
 var activeTopPresenters: [TopToastPresenter] = []
 
-func presentToast(message: String, duration: ToastDuration, isShowTop: Bool) {
+func presentToast(message: String, duration: ToastDuration, isShowTop: Bool, type: ToastType) {
     // 옵저버 첫 호출 시 초기화 보장
     _ = ToastKeyboardObserver.shared
 
@@ -135,13 +155,21 @@ func presentToast(message: String, duration: ToastDuration, isShowTop: Bool) {
         .flatMap({ $0.windows })
         .first(where: { $0.isKeyWindow }) else { return }
 
+    // 햅틱 피드백: positive → success, negative → error
+    switch type {
+    case .positive:
+        HapticManager.shared.start(.notification(.success))
+    case .negative:
+        HapticManager.shared.start(.notification(.error))
+    }
+
     let horizontalPadding: CGFloat = 32
     let maxWidth = window.bounds.width - horizontalPadding * 2
     let toast = ToastView(message: message)
 
     if isShowTop {
         // 상단: 위에서 내려오는 애니메이션 + 터치 홀드 + 스와이프 해제
-        let presenter = TopToastPresenter(toast: toast, window: window, duration: duration.seconds)
+        let presenter = TopToastPresenter(toast: toast, window: window, duration: duration.seconds, type: type)
         activeTopPresenters.append(presenter)
         presenter.present(maxWidth: maxWidth) {
             activeTopPresenters.removeAll { $0 === presenter }
@@ -172,6 +200,10 @@ func presentToast(message: String, duration: ToastDuration, isShowTop: Bool) {
         UIView.animate(withDuration: 0.3) {
             toast.alpha = 1
         } completion: { _ in
+            // negative일 때 등장 후 흔들기
+            if type == .negative {
+                toast.shake()
+            }
             UIView.animate(withDuration: 0.3, delay: duration.seconds) {
                 toast.alpha = 0
             } completion: { _ in
@@ -189,6 +221,7 @@ final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate {
     private let toast: ToastView
     private let window: UIWindow
     private let duration: TimeInterval
+    private let type: ToastType
     private var onDismissed: (() -> Void)? = nil
 
     private var topConstraint: NSLayoutConstraint!
@@ -205,10 +238,11 @@ final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate {
     /// 타이머가 만료됐지만 터치 중이어서 대기 중인지
     private var pendingDismiss = false
 
-    init(toast: ToastView, window: UIWindow, duration: TimeInterval) {
+    init(toast: ToastView, window: UIWindow, duration: TimeInterval, type: ToastType) {
         self.toast = toast
         self.window = window
         self.duration = duration
+        self.type = type
     }
 
     func present(maxWidth: CGFloat, onDismissed: @escaping () -> Void) {
@@ -246,6 +280,10 @@ final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate {
         ) {
             self.window.layoutIfNeeded()
         } completion: { _ in
+            // negative일 때 등장 후 흔들기
+            if self.type == .negative {
+                self.toast.shake()
+            }
             self.scheduleDismiss()
         }
     }
@@ -361,8 +399,9 @@ extension UIView {
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop)
+    ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
+    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
     }
 }
 
@@ -375,8 +414,9 @@ extension UIViewController {
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop)
+    ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
+    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
     }
 }
 
@@ -391,8 +431,8 @@ extension View {
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop)
+    ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
+    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
     }
 }
-
