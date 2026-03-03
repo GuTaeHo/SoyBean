@@ -94,8 +94,9 @@ public final class ToastView: UIView {
 
     // MARK: - Shake Animation
 
-    /// 토스트를 좌우로 흔드는 애니메이션
+    /// 토스트를 좌우로 흔드는 애니메이션 (흔들림 시작 시점에 error 햅틱 발생)
     func shake() {
+        HapticManager.shared.start(.notification(.error))
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
         animation.duration = 0.45
@@ -155,13 +156,7 @@ func presentToast(message: String, duration: ToastDuration, isShowTop: Bool, typ
         .flatMap({ $0.windows })
         .first(where: { $0.isKeyWindow }) else { return }
 
-    // 햅틱 피드백: positive → success, negative → error
-    switch type {
-    case .positive:
-        HapticManager.shared.start(.notification(.success))
-    case .negative:
-        HapticManager.shared.start(.notification(.error))
-    }
+
 
     let horizontalPadding: CGFloat = 32
     let maxWidth = window.bounds.width - horizontalPadding * 2
@@ -200,9 +195,10 @@ func presentToast(message: String, duration: ToastDuration, isShowTop: Bool, typ
         UIView.animate(withDuration: 0.3) {
             toast.alpha = 1
         } completion: { _ in
-            // negative일 때 등장 후 흔들기
             if type == .negative {
                 toast.shake()
+            } else {
+                HapticManager.shared.start(.notification(.success))
             }
             UIView.animate(withDuration: 0.3, delay: duration.seconds) {
                 toast.alpha = 0
@@ -280,9 +276,10 @@ final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate {
         ) {
             self.window.layoutIfNeeded()
         } completion: { _ in
-            // negative일 때 등장 후 흔들기
             if self.type == .negative {
                 self.toast.shake()
+            } else {
+                HapticManager.shared.start(.notification(.success))
             }
             self.scheduleDismiss()
         }
