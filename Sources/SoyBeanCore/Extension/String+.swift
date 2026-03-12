@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 
 public extension String {
@@ -33,6 +34,16 @@ public extension String {
             }
         }
         return ""
+    }
+    
+    /// SHA256 해시 값을 계산하여 hexadecimal 문자열로 반환합니다.
+    var toSHA256: String {
+        guard let data = self.data(using: .utf8) else {
+            return ""
+        }
+        
+        let hashed = SHA256.hash(data: data)
+        return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
     
     /**
