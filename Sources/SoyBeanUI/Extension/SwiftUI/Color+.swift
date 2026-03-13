@@ -6,7 +6,9 @@
 //
 
 import SwiftUI
-
+#if os(iOS)
+import UIKit
+#endif
 
 public extension Color {
     /// RGB 로 색상 초기화
@@ -61,15 +63,20 @@ public extension Color {
     }
 }
 
-#if os(iOS)
-import UIKit
 
-public extension Color {
-    var toUIColor: UIColor? {
+
+extension Color: ColorConvertible {
+    /// ColorConvertible -> Color 로 변환
+    public var toSwiftUIColor: Color {
+        return self
+    }
+#if os(iOS)
+    /// SwiftUI Color -> UIColor 로 변환
+    public var toUIColor: UIColor? {
         UIColor(self)
     }
-}
 #endif
+}
 
 public extension Comparable {
     func clamped(to limits: ClosedRange<Self>) -> Self {

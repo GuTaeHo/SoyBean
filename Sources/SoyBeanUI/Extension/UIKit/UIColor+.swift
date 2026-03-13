@@ -1,0 +1,50 @@
+//
+//  UIColor+.swift
+//  SoyBean
+//
+//  Created by 구태호 on 3/13/26.
+//
+
+import SwiftUI
+
+public extension UIColor {
+    convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
+        self.init(red: r / 255, green: g / 255, blue: b / 255, alpha: a)
+    }
+
+    convenience init(hex: String, alpha: CGFloat = 1.0) {
+        var hexFormatted: String = hex.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
+
+        if hexFormatted.hasPrefix("#") {
+            hexFormatted = String(hexFormatted.dropFirst())
+        }
+
+        assert(hexFormatted.count == 6, "Invalid hex code used.")
+
+        var rgbValue: UInt64 = 0
+        Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
+
+        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+                  alpha: alpha)
+    }
+
+    func toHexString() -> String {
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+        let rgb = Int(r * 255) << 16 | Int(g * 255) << 8 | Int(b * 255) << 0
+
+        return String(format: "#%06x", rgb)
+    }
+}
+
+extension UIColor: ColorConvertible {
+    /// UIColor 를 SwiftUI Color 로 변환
+    public var toSwiftUIColor: Color {
+        return Color(uiColor: self)
+    }
+}
