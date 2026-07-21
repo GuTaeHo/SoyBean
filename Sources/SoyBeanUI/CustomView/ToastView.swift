@@ -5,7 +5,7 @@
 //  Created by 구태호 on 2/26/26.
 //
 
-import UIKit
+import Foundation
 
 // MARK: - Toast Duration
 
@@ -29,6 +29,9 @@ public enum ToastType {
     /// 오류/경고 등 부정적인 피드백 → .error 햅틱 + 좌우 흔들림
     case negative
 }
+
+#if os(iOS)
+import UIKit
 
 // MARK: - ToastView
 
@@ -433,3 +436,224 @@ extension View {
         presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
     }
 }
+#elseif os(macOS)
+import AppKit
+import SwiftUI
+
+// MARK: - ToastView
+
+public final class ToastView: NSView {
+
+    private let label: NSTextField = {
+        let label = NSTextField(labelWithString: "")
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.alignment = .center
+        label.maximumNumberOfLines = 0
+        label.lineBreakMode = .byWordWrapping
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let blurView: NSVisualEffectView = {
+        let view = NSVisualEffectView()
+        view.material = .hudWindow
+        view.blendingMode = .withinWindow
+        view.state = .active
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    public init(message: String) {
+        super.init(frame: .zero)
+        label.stringValue = message
+        setup()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func setup() {
+        wantsLayer = true
+        translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(blurView)
+        blurView.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            blurView.topAnchor.constraint(equalTo: topAnchor),
+            blurView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            blurView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            label.topAnchor.constraint(equalTo: blurView.topAnchor, constant: 12),
+            label.bottomAnchor.constraint(equalTo: blurView.bottomAnchor, constant: -12),
+            label.leadingAnchor.constraint(equalTo: blurView.leadingAnchor, constant: 20),
+            label.trailingAnchor.constraint(equalTo: blurView.trailingAnchor, constant: -20),
+        ])
+    }
+
+    override public func layout() {
+        super.layout()
+        layer?.cornerRadius = bounds.height / 2
+        layer?.masksToBounds = true
+    }
+
+    func shake() {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.45
+        animation.values = [0, -10, 10, -8, 8, -5, 5, 0]
+        layer?.add(animation, forKey: "shake")
+    }
+}
+
+// MARK: - Toast Presenter
+
+private var activeMacPresenters: [MacToastPresenter] = []
+
+private final class MacToastPresenter {
+
+    private let toast: ToastView
+    private let containerView: NSView
+    private let duration: TimeInterval
+    private let type: ToastType
+    private let isShowTop: Bool
+    private var topConstraint: NSLayoutConstraint?
+
+    init(
+        toast: ToastView,
+        containerView: NSView,
+        duration: TimeInterval,
+        type: ToastType,
+        isShowTop: Bool
+    ) {
+        self.toast = toast
+        self.containerView = containerView
+        self.duration = duration
+        self.type = type
+        self.isShowTop = isShowTop
+    }
+
+    func present(onDismissed: @escaping () -> Void) {
+        containerView.addSubview(toast)
+
+        var constraints = [
+            toast.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            toast.widthAnchor.constraint(lessThanOrEqualTo: containerView.widthAnchor, constant: -64),
+        ]
+
+        if isShowTop {
+            let topConstraint = toast.topAnchor.constraint(equalTo: containerView.topAnchor, constant: -100)
+            self.topConstraint = topConstraint
+            constraints.append(topConstraint)
+        } else {
+            constraints.append(toast.centerYAnchor.constraint(equalTo: containerView.centerYAnchor))
+        }
+
+        NSLayoutConstraint.activate(constraints)
+        containerView.layoutSubtreeIfNeeded()
+        toast.alphaValue = 0
+
+        if isShowTop {
+            topConstraint?.constant = 16
+        }
+
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.3
+            context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            context.allowsImplicitAnimation = true
+            toast.animator().alphaValue = 1
+            containerView.layoutSubtreeIfNeeded()
+        } completionHandler: { [weak self] in
+            guard let self else { return }
+            if self.type == .negative {
+                self.toast.shake()
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + self.duration) {
+                self.dismiss(onDismissed: onDismissed)
+            }
+        }
+    }
+
+    private func dismiss(onDismissed: @escaping () -> Void) {
+        if isShowTop {
+            topConstraint?.constant = -(toast.bounds.height + 32)
+        }
+
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.3
+            context.timingFunction = CAMediaTimingFunction(name: .easeIn)
+            context.allowsImplicitAnimation = true
+            toast.animator().alphaValue = 0
+            containerView.layoutSubtreeIfNeeded()
+        } completionHandler: { [weak self] in
+            self?.toast.removeFromSuperview()
+            onDismissed()
+        }
+    }
+}
+
+private func presentToast(
+    message: String,
+    duration: ToastDuration,
+    isShowTop: Bool,
+    type: ToastType
+) {
+    DispatchQueue.main.async {
+        guard let window = NSApp.keyWindow ?? NSApp.windows.first(where: { $0.isVisible }),
+              let containerView = window.contentView else { return }
+
+        let toast = ToastView(message: message)
+        let presenter = MacToastPresenter(
+            toast: toast,
+            containerView: containerView,
+            duration: duration.seconds,
+            type: type,
+            isShowTop: isShowTop
+        )
+        activeMacPresenters.append(presenter)
+        presenter.present {
+            activeMacPresenters.removeAll { $0 === presenter }
+        }
+    }
+}
+
+// MARK: - AppKit Extensions
+
+public extension NSView {
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    }
+}
+
+public extension NSViewController {
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    }
+}
+
+public extension View {
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    }
+}
+#endif

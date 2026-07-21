@@ -5,6 +5,7 @@
 //  Created by 구태호 on 3/12/26.
 //
 
+#if os(iOS)
 import UIKit
 
 public extension UIBarButtonItem {
@@ -56,3 +57,4 @@ public extension UIBarButtonItem {
         action = #selector(UIBarButtonItem.closureAction)
     }
 }
+#endif

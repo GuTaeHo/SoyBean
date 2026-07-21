@@ -5,7 +5,9 @@
 //  Created by 구태호 on 3/13/26.
 //
 
+#if os(iOS)
 import SwiftUI
+import UIKit
 
 public extension UIColor {
     convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
@@ -48,3 +50,4 @@ extension UIColor: ColorConvertible {
         return Color(uiColor: self)
     }
 }
+#endif

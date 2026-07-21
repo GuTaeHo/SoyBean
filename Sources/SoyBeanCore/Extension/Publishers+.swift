@@ -5,6 +5,8 @@
 //  Created by 구태호 on 2/23/26.
 //
 
+// Keyboard notifications and UIKit animation options are only available on iOS.
+#if os(iOS)
 import Combine
 import UIKit
 
@@ -90,3 +92,4 @@ public extension Publishers {
             .eraseToAnyPublisher()
     }
 }
+#endif
