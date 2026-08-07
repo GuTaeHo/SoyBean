@@ -28,6 +28,14 @@ public enum FontType: String, CaseIterable {
     case IBMPlexSemiBold = "IBMPlexSansKR-SemiBold"
     /// 700, Bold, IBMPlexSansKR
     case IBMPlexBold = "IBMPlexSansKR-Bold"
+    /// 300, Light, NanumSquareRound
+    case nanumSquareRoundLight = "NanumSquareRoundOTFL"
+    /// 400, Regular, NanumSquareRound
+    case nanumSquareRoundRegular = "NanumSquareRoundOTFR"
+    /// 700, Bold, NanumSquareRound
+    case nanumSquareRoundBold = "NanumSquareRoundOTFB"
+    /// 800, ExtraBold, NanumSquareRound
+    case nanumSquareRoundExtraBold = "NanumSquareRoundOTFEB"
 }
 
 public extension Font {

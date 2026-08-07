@@ -14,7 +14,7 @@ public extension UIFont {
     static func custom(type: FontType, size: CGFloat) -> UIFont {
         return UIFont(name: type.rawValue, size: size) ?? .systemFont(ofSize: size)
     }
-    
+
     /// 시스템에 등록된 폰트 명을 출력합니다.
     static func fontNames() -> [String] {
         UIFont.familyNames
@@ -24,15 +24,6 @@ public extension UIFont {
                     fontName
                 }
             }
-    }
-}
-
-#elseif os(macOS)
-import AppKit
-
-public extension NSFont {
-    static func custom(type: FontType, size: CGFloat) -> NSFont {
-        return NSFont(name: type.rawValue, size: size) ?? .systemFont(ofSize: size)
     }
 }
 #endif
