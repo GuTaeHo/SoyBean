@@ -10,8 +10,10 @@ import Foundation
 public class DecodeUtil {
     /// String 형태의 JWT Token 파싱
     /// - Note: JWT Token 은 header, payload, signature 로 구성되어있다. 각각의 정보는 `.` 을 기준으로 구분되며, 실질적인 정보는 두 번째 `payload` 부분에 저장된다
+    /// - Returns: 디코딩된 payload. 토큰 형식 또는 payload가 올바르지 않으면 빈 딕셔너리
     public static func jwtDecode(jwtToken jwt: String) -> [String: Any] {
         let segments = jwt.components(separatedBy: ".")
+        guard segments.count == 3 else { return [:] }
         return decodeJWTpayload(segments[1]) ?? [:]
     }
     
