@@ -15,6 +15,12 @@ public struct KeyboardInfo {
     public let height: CGFloat
     public let duration: Double
     public let curve: UIView.AnimationOptions
+
+    public init(height: CGFloat, duration: Double, curve: UIView.AnimationOptions) {
+        self.height = height
+        self.duration = duration
+        self.curve = curve
+    }
 }
 
 public extension Publishers {
@@ -29,15 +35,17 @@ public extension Publishers {
     ///     }
     ///     .store(in: &cancellables)
     /// ```
-    public static var keyboardHeightPublisher: AnyPublisher<CGFloat, Never> {
-        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+    static var keyboardHeightPublisher: AnyPublisher<CGFloat, Never> {
+        let willChangeFrame = NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
             .compactMap { $0.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect }
-            .map { $0.height }
+            .map { frame in
+                max(0, UIScreen.main.bounds.maxY - frame.minY)
+            }
 
         let willHide = NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
             .map { _ in CGFloat(0) }
 
-        return Publishers.Merge(willShow, willHide)
+        return Publishers.Merge(willChangeFrame, willHide)
             .eraseToAnyPublisher()
     }
     
@@ -56,8 +64,8 @@ public extension Publishers {
     ///     }
     ///     .store(in: &cancellables)
     /// ```
-    public static var keyboardInfoPublisher: AnyPublisher<KeyboardInfo, Never> {
-        let willShow = NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+    static var keyboardInfoPublisher: AnyPublisher<KeyboardInfo, Never> {
+        let willChangeFrame = NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)
             .compactMap { notification -> KeyboardInfo? in
                 guard
                     let userInfo = notification.userInfo,
@@ -67,7 +75,7 @@ public extension Publishers {
                 else { return nil }
 
                 return KeyboardInfo(
-                    height: frame.height,
+                    height: max(0, UIScreen.main.bounds.maxY - frame.minY),
                     duration: duration,
                     curve: UIView.AnimationOptions(rawValue: curveValue << 16)
                 )
@@ -88,7 +96,7 @@ public extension Publishers {
                 )
             }
 
-        return Publishers.Merge(willShow, willHide)
+        return Publishers.Merge(willChangeFrame, willHide)
             .eraseToAnyPublisher()
     }
 }
