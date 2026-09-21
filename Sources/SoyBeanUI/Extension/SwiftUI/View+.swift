@@ -19,10 +19,15 @@ public extension View {
      ```swift
      // 사용방법
      
-     @State var isShake: Bool = false
+     @State var shakeAmount: Double = 0
      
      Button("Hello")
-     .shake(amount: isShake ? 20 : 0)
+         .shake(amount: shakeAmount)
+
+     // 오류가 발생한 시점 등에 실행
+     withAnimation(.linear(duration: 0.45)) {
+         shakeAmount = shakeAmount == 0 ? 6 : 0
+     }
      ```
      */
     func shake(amount: Double = 10.0) -> some View {
