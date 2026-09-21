@@ -6,8 +6,6 @@ name: Swift
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -20,8 +18,21 @@ jobs:
         with:
           fetch-depth: 0  # 태그를 적용하려면 전체 히스토리가 필요함
 
+      - name: Skip if HEAD is already tagged
+        id: check_tag
+        run: |
+          # 수동으로 버전 태그를 붙인 커밋은 자동 태그를 추가하지 않음
+          EXISTING_TAG=$(git tag --points-at HEAD)
+          if [ -n "$EXISTING_TAG" ]; then
+            echo "HEAD already tagged: $EXISTING_TAG"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Get latest tag and increment patch version
         id: get_new_tag
+        if: steps.check_tag.outputs.skip == 'false'
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
           NEW_TAG=$(echo $LATEST_TAG | awk -F. '{$NF++; print $1"."$2"."$3}' OFS=.)
@@ -29,6 +40,7 @@ jobs:
           echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
 
       - name: Create and push tag
+        if: steps.check_tag.outputs.skip == 'false'
         run: |
           git config --global user.name "GuTaeHo"
           git config --global user.email "sbpdt1062@gmail.com"
