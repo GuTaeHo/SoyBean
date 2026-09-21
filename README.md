@@ -11,14 +11,14 @@ SoyBean은 Apple 플랫폼 앱에서 반복적으로 사용하는 확장, 로깅
 | macOS | 12 이상 |
 | watchOS | 8 이상 |
 
-플랫폼은 위와 같이 선언되어 있지만 모든 API가 세 플랫폼에서 동일하게 제공되는 것은 아닙니다. UIKit API와 햅틱, 키보드 Publisher는 iOS 전용이며 AppKit API는 macOS 전용입니다. 공통 SwiftUI 컴포넌트는 각 API의 OS 버전 조건에 따라 사용할 수 있습니다.
+플랫폼은 위와 같이 선언되어 있지만 모든 API가 세 플랫폼에서 동일하게 제공되는 것은 아닙니다. UIKit API와 햅틱, 키보드 Publisher는 iOS 전용이며 AppKit API는 macOS 전용입니다. 자세한 내용은 [플랫폼 지원](Documentation/PlatformSupport.md)을 참고하세요.
 
 ## 설치
 
 ### Xcode에서 추가
 
 1. `File > Add Package Dependencies`를 선택합니다.
-2. 검색란에 다음 저장소 주소를 입력합니다.
+2. 다음 저장소 주소를 입력합니다.
 
    ```text
    https://github.com/GuTaeHo/SoyBean.git
@@ -32,7 +32,7 @@ SoyBean은 Apple 플랫폼 앱에서 반복적으로 사용하는 확장, 로깅
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "1.2.21")
+    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "1.2.24")
 ],
 targets: [
     .target(
@@ -44,24 +44,24 @@ targets: [
 ]
 ```
 
-예시는 현재 저장소의 최신 태그인 `1.2.21`을 기준으로 합니다. 프로젝트 정책에 맞는 릴리스 버전이나 브랜치를 선택할 수 있습니다.
+예시는 현재 저장소의 최신 태그인 `1.2.24`를 기준으로 합니다.
 
 ## 제공 제품
 
-| 제품 | 역할 |
-| --- | --- |
-| `SoyBean` | 아래 세 모듈을 한 번에 다시 내보내는 통합 모듈 |
-| `SoyBeanCore` | 오류, 로깅, Foundation·Swift·Combine 확장 |
-| `SoyBeanUI` | SwiftUI 컴포넌트, 폰트 리소스, UIKit·AppKit 보조 기능 |
-| `SoyBeanUtil` | 날짜 포맷, 정규식, JWT 디코딩, Keychain 및 앱 유틸리티 |
+| 제품 | 역할 | 상세 문서 |
+| --- | --- | --- |
+| `SoyBean` | 아래 세 모듈을 다시 내보내는 통합 모듈 | 이 README |
+| `SoyBeanCore` | 오류, 로깅, Foundation·Swift·Combine 확장 | [SoyBeanCore](Documentation/SoyBeanCore.md) |
+| `SoyBeanUI` | SwiftUI 컴포넌트, 폰트, UIKit·AppKit 보조 기능 | [SoyBeanUI](Documentation/SoyBeanUI.md) |
+| `SoyBeanUtil` | 포맷, 검증, 디코딩, Keychain 및 앱 유틸리티 | [SoyBeanUtil](Documentation/SoyBeanUtil.md) |
 
-전체 기능이 필요하면 통합 제품 하나만 추가합니다.
+전체 기능이 필요하면 통합 제품을 사용합니다.
 
 ```swift
 import SoyBean
 ```
 
-필요한 기능만 사용하려면 개별 제품을 추가하고 직접 import합니다.
+필요한 기능만 사용하려면 개별 제품을 의존성에 추가한 뒤 직접 import합니다.
 
 ```swift
 import SoyBeanCore
@@ -71,66 +71,60 @@ import SoyBeanUtil
 
 ## 빠른 사용법
 
-### 로그 출력
-
-로그는 `DEBUG` 빌드에서 OSLog로 출력됩니다.
+### 로깅과 기본 확장
 
 ```swift
 import SoyBeanCore
 
 Log.info("화면 진입")
-Log.debug(["page": "home"])
-Log.error("요청 실패")
+
+let value = ["딸기", "우유"][safe: 1]
+let digest = "SoyBean".toSHA256
 ```
 
-### 날짜 포맷 변환
+로그는 `DEBUG` 빌드에서 OSLog로 출력됩니다.
+
+### 버전 비교와 Codable 저장
+
+```swift
+import SoyBean
+
+let needsUpdate = try AppVersion(Bundle.main.appVersion) < AppVersion("2.4.0")
+
+try UserDefaults.standard.save(profile, forKey: "profile")
+let savedProfile = try UserDefaults.standard.load(Profile.self, forKey: "profile")
+```
+
+`AppVersion`은 `1.10`과 `1.9`처럼 자리수가 다른 숫자 버전을 올바르게 비교합니다. Codable 값은 JSON 데이터로 저장되며 `nil`을 저장하면 해당 키가 삭제됩니다.
+
+### 포맷과 유효성 검사
 
 ```swift
 import SoyBeanUtil
 
-let now = FormatUtil.currentDate()
 let displayDate = try FormatUtil.formatDate(
     "2026-07-21 14:30:00",
     to: .yy_Dot_MM_Dot_dd
 )
-```
-
-### 문자열 유효성 검사
-
-```swift
-import SoyBeanUtil
 
 let isEmail = RegExpUtil.evaluate(
     type: .email,
     compareWith: "user@example.com"
 )
-
-let isPassword = RegExpUtil.evaluate(
-    type: .password(range: 8...20),
-    compareWith: "password123"
-)
 ```
 
-### Keychain 저장과 조회
-
-저장할 값은 `Codable`을 준수해야 합니다.
+### Keychain
 
 ```swift
 import SoyBeanUtil
 
 KeychainManager.shared.save("access-token", forKey: "token")
-
-let token = KeychainManager.shared.load(
-    String.self,
-    forKey: "token"
-)
+let token = KeychainManager.shared.load(String.self, forKey: "token")
 ```
 
-Keychain Sharing을 사용하는 경우 `groupAt`에 타깃에 등록된 Access Group을 전달합니다.
+저장할 값은 `Codable`을 준수해야 합니다. Keychain Sharing을 사용하는 경우 `groupAt`에 타깃에 등록된 Access Group을 전달합니다.
 
 ### 커스텀 폰트
-
-`SoyBeanUI`에는 Pretendard, IBM Plex Sans KR 및 NanumSquareRound OTF 리소스가 포함되어 있습니다. 앱 진입 시 폰트를 등록한 다음 사용합니다.
 
 ```swift
 import SwiftUI
@@ -157,10 +151,6 @@ struct MyApp: App {
 
 ### Toast
 
-Toast는 iOS에서 UIKit, macOS에서 AppKit으로 구현되어 있습니다. 두 플랫폼 모두 중앙 또는 상단 표시, 자동 제거, `.negative` 타입의 흔들림 효과를 지원합니다. 햅틱은 iOS에서만 발생합니다.
-
-#### UIKit
-
 ```swift
 import SoyBeanUI
 
@@ -172,102 +162,37 @@ view.sbShowToast(
 )
 ```
 
-`UIViewController`에서도 같은 메서드를 호출할 수 있습니다.
+Toast는 iOS의 `UIView`·`UIViewController`·SwiftUI `View`와 macOS의 `NSView`·`NSViewController`·SwiftUI `View`에서 사용할 수 있습니다. `.short`는 3초, `.long`은 6초이며 `.negative` 타입에는 흔들림 효과가 적용됩니다. 햅틱은 iOS에서만 발생합니다.
 
-#### AppKit
+SwiftUI 로딩·키보드 대응·검증 피드백과 iOS 공유 화면·캘린더 내보내기는 [SoyBeanUI 전체 기능](Documentation/SoyBeanUI.md), multipart 본문과 알림 첨부 다운로드는 [SoyBeanUtil 전체 기능](Documentation/SoyBeanUtil.md)에서 예제를 확인할 수 있습니다.
 
-```swift
-import SoyBeanUI
+## 문서 구성
 
-view.sbShowToast(
-    message: "저장하지 못했습니다.",
-    duration: .long,
-    isShowTop: false,
-    type: .negative
-)
-```
+README는 설치, 제품 선택 및 대표 사용법만 다룹니다. 전체 공개 기능 목록과 플랫폼 조건은 다음 문서에서 관리합니다.
 
-`NSViewController`에서도 같은 메서드를 호출할 수 있습니다.
+- [SoyBeanCore 전체 기능](Documentation/SoyBeanCore.md)
+- [SoyBeanUI 전체 기능](Documentation/SoyBeanUI.md)
+- [SoyBeanUtil 전체 기능](Documentation/SoyBeanUtil.md)
+- [플랫폼 지원](Documentation/PlatformSupport.md)
 
-#### SwiftUI
+각 API의 정확한 매개변수, 반환값 및 실패 조건은 공개 선언의 `///` 문서 주석을 기준으로 합니다.
 
-기존 API는 값을 반환하는 View modifier가 아니라 토스트 표시를 실행하는 메서드이므로 버튼 액션과 같은 실행 시점에 호출합니다.
-
-```swift
-import SwiftUI
-import SoyBeanUI
-
-struct ContentView: View {
-    var body: some View {
-        Button("Toast 표시") {
-            EmptyView().sbShowToast(
-                message: "완료되었습니다.",
-                type: .positive
-            )
-        }
-    }
-}
-```
-
-## 플랫폼별 기능
-
-| 기능 | iOS | macOS | watchOS |
-| --- | --- | --- | --- |
-| Foundation·Swift 확장 | 지원 | 지원 | 지원 |
-| 로깅과 일반 유틸리티 | 지원 | 지원 | 기반 Apple 프레임워크가 제공되는 범위에서 지원 |
-| 공통 SwiftUI 컴포넌트 | 지원 | 지원 | API 버전 조건에 따라 지원 |
-| 키보드 Publisher | 지원 | 미지원 | 미지원 |
-| UIKit 확장과 햅틱 | 지원 | 미지원 | 미지원 |
-| AppKit 보조 기능 | 미지원 | 지원 | 미지원 |
-| Toast | UIKit | AppKit | 미지원 |
-
-## 프로젝트 구조
+## 모듈 구조
 
 ```text
 SoyBean
-├── Package.swift
-├── Sources
-│   ├── SoyBean
-│   │   └── Importer.swift
-│   ├── SoyBeanCore
-│   │   ├── Error
-│   │   ├── Extension
-│   │   ├── Logger
-│   │   └── Protocol
-│   ├── SoyBeanUI
-│   │   ├── CustomEffect
-│   │   ├── CustomView
-│   │   ├── CustomViewModifier
-│   │   ├── Extension
-│   │   ├── Manager
-│   │   ├── Protocol
-│   │   └── Resources
-│   └── SoyBeanUtil
-│       ├── Manager
-│       ├── Protocol
-│       └── Util
-└── Tests
-    └── SoyBeanTests
+├── SoyBeanCore
+├── SoyBeanUI ──> SoyBeanCore
+└── SoyBeanUtil ─> SoyBeanCore
 ```
 
-모듈 의존 관계는 다음과 같습니다.
+`SoyBeanCore`는 다른 하위 모듈에 의존하지 않습니다. UI와 유틸리티 모듈은 Core에만 의존합니다.
 
-```mermaid
-flowchart TD
-    SoyBean --> SoyBeanCore
-    SoyBean --> SoyBeanUI
-    SoyBean --> SoyBeanUtil
-    SoyBeanUI --> SoyBeanCore
-    SoyBeanUtil --> SoyBeanCore
-```
-
-`SoyBeanCore`는 다른 하위 모듈에 의존하지 않습니다. UI와 유틸리티 모듈은 공통 타입 및 확장을 사용하기 위해 Core에만 의존합니다.
-
-## 로컬 빌드
+## 로컬 검증
 
 ```sh
 swift build
 swift test
 ```
 
-플랫폼 전용 코드를 수정했다면 해당 iOS 또는 macOS 타깃도 함께 컴파일하는 것을 권장합니다.
+플랫폼 전용 코드를 수정했다면 iOS 및 watchOS 타깃도 함께 컴파일해야 합니다. 검증 범위는 [플랫폼 지원 문서](Documentation/PlatformSupport.md)에 정리되어 있습니다.
