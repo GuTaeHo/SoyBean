@@ -29,7 +29,7 @@ public extension Date {
      // receiver 의 시각 2024-10-17 16:01:20
      // comparison 의 시각 2024-10-17 16:03:40
      
-     date1.timeDifferenceToSecond(date2) // 140
+     date1.timeDifferenceToSecond(date2) // -140
      ```
      */
     func timeDifferenceToSecond(_ comparison: Date) -> Int {
