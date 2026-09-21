@@ -11,6 +11,7 @@ import SoyBeanCore
 #if os(iOS)
 import UIKit
 
+@available(iOSApplicationExtension, unavailable)
 public class AppUtil {
     /// 앱 종료
     public static func exitApp() {
@@ -55,6 +56,7 @@ public class AppUtil {
     }
 }
 
+@available(iOSApplicationExtension, unavailable)
 public extension AppUtil {
     /// 클립보드 저장 & 불러오기
     /// - Important: 클립보드에 문자열이 있을 때만 문자열을 반환

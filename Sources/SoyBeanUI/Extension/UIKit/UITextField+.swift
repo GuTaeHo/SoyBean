@@ -83,7 +83,7 @@ public extension UITextField {
         inputAccessoryView = toolbar
     }
 
-    @objc public func doneButtonAction() {
+    @objc func doneButtonAction() {
         resignFirstResponder()
     }
 }

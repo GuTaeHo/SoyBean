@@ -19,8 +19,7 @@ public extension UIBarButtonItem {
     }
 
     private enum AssociatedKeys {
-        static var targetClosure = "targetClosure"
-        static var actionHandler = "actionHandler"
+        static var targetClosure: UInt8 = 0
     }
 
     private var targetClosure: UIBarButtonItemTargetClosure? {

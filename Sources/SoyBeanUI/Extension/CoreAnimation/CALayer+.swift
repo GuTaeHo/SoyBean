@@ -5,7 +5,8 @@
 //  Created by 구태호 on 2/21/25.
 //
 
-import SwiftUI
+#if os(iOS) || os(macOS)
+import QuartzCore
 
 
 public extension CALayer {
@@ -26,3 +27,4 @@ public extension CALayer {
         }
     }
 }
+#endif
