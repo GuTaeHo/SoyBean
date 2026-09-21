@@ -32,7 +32,7 @@ SoyBean은 Apple 플랫폼 앱에서 반복적으로 사용하는 확장, 로깅
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "1.2.24")
+    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "2.0.0")
 ],
 targets: [
     .target(
@@ -44,7 +44,7 @@ targets: [
 ]
 ```
 
-예시는 현재 저장소의 최신 태그인 `1.2.24`를 기준으로 합니다.
+예시는 현재 저장소의 최신 태그인 `2.0.0`을 기준으로 합니다.
 
 ## 제공 제품
 
