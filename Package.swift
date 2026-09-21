@@ -56,6 +56,7 @@ let package = Package(
             name: "SoyBeanTests",
             dependencies: [
                 "SoyBeanCore",
+                "SoyBeanUI",
                 "SoyBeanUtil",
             ]
         )
