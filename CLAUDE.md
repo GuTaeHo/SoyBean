@@ -109,7 +109,6 @@ Do not move or rename a font without updating `FontType` and verifying resource 
 - Place platform-specific code behind compile-time guards that cover the import and every dependent declaration.
 - Preserve existing public behavior unless a breaking change is explicitly requested.
 - Do not add third-party dependencies for functionality available in Apple frameworks or the standard library without a clear requirement.
-- Do not manually edit generated content under `Derived` or generated Xcode project data unless the task specifically requires it.
 - Keep the Korean `README.md` aligned with platform support, products, public usage, and module structure described here.
 
 ## Verification
