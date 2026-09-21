@@ -29,5 +29,22 @@ public extension Publisher {
             receiveValue(object, value)
         })
     }
-}
 
+    /// 객체를 약하게 참조하면서 완료와 값 이벤트를 구독합니다.
+    func sink<Object: AnyObject>(
+        with object: Object,
+        receiveCompletion: @escaping (Object, Subscribers.Completion<Failure>) -> Void,
+        receiveValue: @escaping (Object, Output) -> Void
+    ) -> AnyCancellable {
+        sink(
+            receiveCompletion: { [weak object] completion in
+                guard let object else { return }
+                receiveCompletion(object, completion)
+            },
+            receiveValue: { [weak object] value in
+                guard let object else { return }
+                receiveValue(object, value)
+            }
+        )
+    }
+}
