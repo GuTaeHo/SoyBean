@@ -51,21 +51,23 @@ public extension String {
      
         - Parameters:
             - format: 날짜 포맷, 기본값은 "yyyy-MM-dd HH:mm:ss"
-            - secondsFromGMT: 표준 GMT 시간으로부터 차이, 숫자가 커질수록 빨라짐, 기본값은 한국 표준시인 **9**
+            - secondsFromGMT: GMT와의 시차를 시간 단위로 전달. 기존 API 이름과 달리 초 단위가 아니며, 기본값은 한국 표준시인 **9**
         - Returns: 변환할 수 없는 경우 nil 을 반환
         - Important: **secondsFromGMT** 값이 별도로 지정되지 않았다면, 항상 한국 표준시를 반환
      
      Example
      ```swift
-        "2024-10-17 15:42:30".toDate()  //  2024년 10월 17일 15시 42분 30초
-        "2024-10-17 15:42:30".toDate("yyyy-MM-dd HH:mm:ss", secondsFromGMT: 0)  //  2024년 10월 17일 06시 42분 30초
+        let koreaDate = "2024-10-17 15:42:30".toDate()
+        let utcDate = "2024-10-17 15:42:30".toDate(secondsFromGMT: 0)
+
+        utcDate?.timeIntervalSince(koreaDate!) // 32400 (9시간)
      ```
      */
     func toDate(_ format: String = "yyyy-MM-dd HH:mm:ss", secondsFromGMT: Int = 9) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = format
-        formatter.timeZone = .init(secondsFromGMT: 9)
-        formatter.locale = .current
+        formatter.timeZone = .init(secondsFromGMT: secondsFromGMT * 60 * 60)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.date(from: self)
     }
 }
