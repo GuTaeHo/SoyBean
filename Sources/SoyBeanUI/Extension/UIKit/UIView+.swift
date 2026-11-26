@@ -99,7 +99,7 @@ public extension UIView {
     @IBInspectable
     var borderColor: UIColor? {
         get {
-            return UIColor(cgColor: layer.borderColor!)
+            return layer.borderColor.map(UIColor.init(cgColor:))
         }
         
         set {

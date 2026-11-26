@@ -8,7 +8,7 @@
 #if os(iOS)
 import UIKit
 
-extension UIViewController {
+public extension UIViewController {
     /// 자식 UIViewController 를 특정 컨테이너 뷰에 추가합니다
     /// - Parameters:
     ///     - childs: 추가될 자식 UIViewController
@@ -17,22 +17,24 @@ extension UIViewController {
     func addChilds(_ childs: UIViewController..., to containerView: UIView) {
         childs.forEach { child in
             addChild(child)
-            containerView.addSubviews(child.view)
+            containerView.addSubview(child.view)
             child.view.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 child.view.topAnchor.constraint(equalTo: containerView.topAnchor),
-                child.view.leftAnchor.constraint(equalTo: containerView.leftAnchor),
+                child.view.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                 child.view.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
                 child.view.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
             ])
+            child.didMove(toParent: self)
         }
     }
     
     /// 자식 UIViewController 를 컨테이너 뷰에서 제거합니다
+    /// - Note: 이 뷰 컨트롤러의 자식이 아닌 뷰 컨트롤러는 무시합니다.
     func removeChilds(_ childs: UIViewController...) {
         childs
             .filter { child in
-                child == self
+                child.parent === self
             }.forEach { child in
                 child.willMove(toParent: nil)
                 child.view.removeFromSuperview()
