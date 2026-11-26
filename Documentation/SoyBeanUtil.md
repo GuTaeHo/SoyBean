@@ -55,7 +55,8 @@ let isPassword = RegExpUtil.evaluate(
 | `update(_:forKey:groupAt:)` | 기존 항목의 값을 수정합니다. |
 | `delete(forKey:groupAt:)` | 지정한 키를 삭제합니다. |
 | `loadAll(groupAt:)` | Generic Password 항목을 문자열 딕셔너리로 조회합니다. 값은 저장된 JSON 데이터의 UTF-8 표현입니다. |
-| `deleteAll(groupAt:)` | 지정 그룹의 Keychain 항목을 클래스별로 일괄 삭제합니다. |
+| `delete(forKeys:groupAt:)` | 지정한 키들을 한 번에 삭제합니다. 없던 키는 성공으로 봅니다. |
+| `deleteAll(groupAt:)` | deprecated. generic password 항목만 일괄 삭제하지만 다른 SDK가 저장한 항목도 지울 수 있으므로 `delete(forKeys:groupAt:)`를 사용합니다. |
 
 Keychain API는 iOS, macOS 및 watchOS에서 사용할 수 있습니다.
 
