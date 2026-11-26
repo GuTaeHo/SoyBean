@@ -77,6 +77,7 @@ Form {
 | `Comparable.clamped(to:)` | 값을 닫힌 범위 안으로 제한합니다. | 전체 |
 | `AttributedString.styledText(...)` | 패키지 폰트, 색상 및 정렬을 적용합니다. | iOS, macOS |
 | `AttributedString.toMutable` | `NSMutableAttributedString`으로 변환합니다. | 전체 |
+| `AttributedStringBuilder` | 속성이 다른 문자열 조각을 체이닝으로 이어 붙여 `NSAttributedString` 또는 `AttributedString`을 만듭니다. | iOS, macOS |
 | `EdgeInsets` 편의 생성자 | 전체·가로·세로 여백을 간단히 생성합니다. | 전체 |
 | `NSDirectionalEdgeInsets` 편의 생성자 | 전체·가로·세로 여백을 간단히 생성합니다. | 전체 |
 
@@ -111,6 +112,18 @@ SwiftUI API는 새 View를 반환하는 modifier가 아니라 표시 동작을 �
 | `HapticManager` | `HapticType`·`start(_:)` | impact, notification 및 selection 햅틱을 표현하고 실행합니다. |
 | `UIBarButtonItem` | `UIBarButtonItemTargetClosure` | 버튼과 함께 호출되는 closure 타입입니다. |
 | `UIBarButtonItem` | closure 생성자 | title 또는 image 버튼 액션을 closure로 받습니다. |
+| `UIApplication` | `currentWindow` | 연결된 모든 씬에서 키 윈도우를 찾습니다. 앱 익스텐션에서는 사용할 수 없습니다. |
+| `UIApplication` | `bottomSafeArea` | 키 윈도우의 하단 안전 영역 높이를 반환합니다. |
+| `UIApplication` | `topViewController` | 키 윈도우에서 화면에 보이는 최상위 뷰 컨트롤러를 반환합니다. |
+| `UIWindow` | `visibleViewController` | 이 윈도우에서 화면에 보이는 최상위 뷰 컨트롤러를 반환합니다. |
+| `UIWindow` | `topViewController(_:)` | 모달, 내비게이션, 탭 계층을 따라 최상위 뷰 컨트롤러를 찾습니다. |
+| `UITableView` | `registerCell(fromNib:bundle:)`·`registerCell(fromClass:)` | 클래스 이름을 재사용 식별자로 셀을 등록합니다. |
+| `UITableView` | `registerHeaderFooterNib(fromNib:bundle:)`·`registerHeaderFooterView(fromClass:)` | 클래스 이름을 재사용 식별자로 헤더·푸터 뷰를 등록합니다. |
+| `UITableView` | `dequeueCell(_:for:)`·`dequeueHeaderFooterView(from:)` | 타입으로 캐스팅해 꺼냅니다. 실패하면 디버그 빌드에서 중단합니다. |
+| `UICollectionView` | `registerCell(_:)`·`registerCellFromNib(_:bundle:)` | 클래스 이름을 재사용 식별자로 셀을 등록합니다. |
+| `UICollectionView` | `registerSupplementaryView(_:ofKind:)`·`registerSupplementaryViewFromNib(_:ofKind:bundle:)` | 클래스 이름을 재사용 식별자로 보충 뷰를 등록합니다. |
+| `UICollectionView` | `dequeueCell(_:for:)`·`dequeueSupplementaryView(_:ofKind:for:)` | 타입으로 캐스팅해 꺼냅니다. 실패하면 디버그 빌드에서 중단합니다. |
+| `UICollectionView` | `scroll(to:alignment:animated:)`·`scrollToTopWithContentInsets(animated:)` | 아이템 위치 또는 인셋을 포함한 최상단으로 스크롤합니다. |
 | `UIColor` | RGB·HEX 생성자 | 정수 RGB 또는 HEX 문자열로 색상을 생성합니다. |
 | `UIColor` | `toHexString()` | 색상을 6자리 HEX 문자열로 변환합니다. |
 | `UIColor` | `toSwiftUIColor` | SwiftUI 색상으로 변환합니다. |
@@ -121,11 +134,13 @@ SwiftUI API는 새 View를 반환하는 modifier가 아니라 표시 동작을 �
 | `UITextField` | `addDoneButtonOnKeyboard` | 키보드 위에 닫기 버튼을 추가합니다. |
 | `UITextField` | `addPreviousNextDoneOnKeyboard` | 이전·다음·완료 툴바를 추가합니다. |
 | `UITextField` | `doneButtonAction` | 현재 텍스트필드의 입력을 종료합니다. |
+| `UIViewController` | `addChilds(_:to:)` | 자식 뷰 컨트롤러를 컨테이너 뷰에 꽉 차게 추가하고 `didMove(toParent:)`까지 호출합니다. |
+| `UIViewController` | `removeChilds(_:)` | 자식 뷰 컨트롤러를 제거합니다. 이 뷰 컨트롤러의 자식이 아니면 무시합니다. |
 | `UIView` | `convert(to:)` | 뷰 원점을 대상 좌표계로 변환합니다. |
 | `UIView` | `hidden`·`display` | 선택적으로 애니메이션하며 표시 상태를 바꿉니다. |
 | `UIView` | `shake` | 좌우 흔들림과 오류 햅틱을 실행합니다. |
 | `UIView` | `addSubviews` | 여러 하위 뷰를 추가합니다. |
-| `UIView` | `borderWidth`·`borderColor`·`cornerRadius` | Interface Builder에서 사용할 수 있는 레이어 속성입니다. |
+| `UIView` | `borderWidth`·`borderColor`·`cornerRadius` | Interface Builder에서 사용할 수 있는 레이어 속성입니다. 테두리 색이 없으면 `borderColor`는 `nil`입니다. |
 
 ### UIKit Combine Publisher
 
