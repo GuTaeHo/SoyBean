@@ -82,14 +82,14 @@ Use `#if os(iOS)`, `#elseif os(macOS)`, and availability checks to preserve thes
 
 ## Toast API Contract
 
-`ToastDuration` supports `.short` (3 seconds) and `.long` (6 seconds). `ToastType` supports `.positive` and `.negative`.
+`ToastDuration` supports `.short` (3 seconds), `.long` (6 seconds), `.custom(seconds)`, and `.infinity`. `ToastType` supports `.positive` and `.negative`. `ToastTheme` supports `.light`, `.dark`, and `.system` (default), which uses the opposite of the current appearance.
 
-The `sbShowToast(message:duration:isShowTop:type:)` API is available from:
+The `sbShowToast(message:duration:isShowTop:type:font:theme:)` API is available from:
 
 - iOS: `UIView`, `UIViewController`, and SwiftUI `View`
 - macOS: `NSView`, `NSViewController`, and SwiftUI `View`
 
-Both implementations support centered or top presentation, automatic dismissal, and a shake animation for negative feedback. iOS additionally emits haptic feedback. macOS intentionally does not emulate haptics.
+Both implementations support centered or top presentation, dismissal through a close button for infinite duration, and a shake animation for negative feedback. iOS additionally emits haptic feedback. macOS intentionally does not emulate haptics.
 
 ## Resources
 
