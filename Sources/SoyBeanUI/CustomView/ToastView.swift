@@ -37,10 +37,14 @@ import UIKit
 
 public final class ToastView: UIView {
 
+    @usableFromInline
+    static var defaultFont: UIFont {
+        .systemFont(ofSize: 14, weight: .medium)
+    }
+
     private let label: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
@@ -57,9 +61,16 @@ public final class ToastView: UIView {
 
     // MARK: - Init
 
-    public init(message: String) {
+    /// 기본 폰트로 메시지를 표시하는 토스트 뷰를 생성합니다.
+    public convenience init(message: String) {
+        self.init(message: message, font: ToastView.defaultFont)
+    }
+
+    /// 지정된 폰트로 메시지를 표시하는 토스트 뷰를 생성합니다.
+    public init(message: String, font: UIFont = ToastView.defaultFont) {
         super.init(frame: .zero)
         label.text = message
+        label.font = font
         setup()
     }
 
@@ -150,7 +161,13 @@ final class ToastKeyboardObserver {
 // TopToastPresenter 인스턴스를 강한 참조로 유지 (dismiss 완료까지 해제 방지)
 var activeTopPresenters: [TopToastPresenter] = []
 
-func presentToast(message: String, duration: ToastDuration, isShowTop: Bool, type: ToastType) {
+private func presentToast(
+    message: String,
+    duration: ToastDuration,
+    isShowTop: Bool,
+    type: ToastType,
+    font: UIFont
+) {
     // 옵저버 첫 호출 시 초기화 보장
     _ = ToastKeyboardObserver.shared
 
@@ -163,7 +180,7 @@ func presentToast(message: String, duration: ToastDuration, isShowTop: Bool, typ
 
     let horizontalPadding: CGFloat = 32
     let maxWidth = window.bounds.width - horizontalPadding * 2
-    let toast = ToastView(message: message)
+    let toast = ToastView(message: message, font: font)
 
     if isShowTop {
         // 상단: 위에서 내려오는 애니메이션 + 터치 홀드 + 스와이프 해제
@@ -394,14 +411,31 @@ final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate {
 
 extension UIView {
 
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
     /// 토스트 메시지를 현재 UIWindow 위에 표시합니다.
     /// - Parameters:
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
     ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: UIFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 
@@ -409,14 +443,31 @@ extension UIView {
 
 extension UIViewController {
 
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
     /// 토스트 메시지를 현재 UIWindow 위에 표시합니다.
     /// - Parameters:
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
     ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: UIFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 
@@ -426,14 +477,31 @@ import SwiftUI
 
 extension View {
 
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive
+    ) {
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
     /// 토스트 메시지를 현재 UIWindow 위에 표시합니다.
     /// - Parameters:
     ///   - message: 표시할 메시지
     ///   - duration: 표시 시간 (.short = 3초, .long = 6초), 기본값: .short
     ///   - isShowTop: true면 상단 표시, false면 화면 세로 중앙 표시, 기본값: false
     ///   - type: 토스트 유형 (.positive = 성공 햅틱, .negative = 에러 햅틱 + 흔들림), 기본값: .positive
-    public func sbShowToast(message: String, duration: ToastDuration = .short, isShowTop: Bool = false, type: ToastType = .positive) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    public func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: UIFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 #elseif os(macOS)
@@ -444,10 +512,14 @@ import SwiftUI
 
 public final class ToastView: NSView {
 
+    @usableFromInline
+    static var defaultFont: NSFont {
+        .systemFont(ofSize: 14, weight: .medium)
+    }
+
     private let label: NSTextField = {
         let label = NSTextField(labelWithString: "")
         label.textColor = .white
-        label.font = .systemFont(ofSize: 14, weight: .medium)
         label.alignment = .center
         label.maximumNumberOfLines = 0
         label.lineBreakMode = .byWordWrapping
@@ -464,9 +536,16 @@ public final class ToastView: NSView {
         return view
     }()
 
-    public init(message: String) {
+    /// 기본 폰트로 메시지를 표시하는 토스트 뷰를 생성합니다.
+    public convenience init(message: String) {
+        self.init(message: message, font: ToastView.defaultFont)
+    }
+
+    /// 지정된 폰트로 메시지를 표시하는 토스트 뷰를 생성합니다.
+    public init(message: String, font: NSFont = ToastView.defaultFont) {
         super.init(frame: .zero)
         label.stringValue = message
+        label.font = font
         setup()
     }
 
@@ -601,13 +680,14 @@ private func presentToast(
     message: String,
     duration: ToastDuration,
     isShowTop: Bool,
-    type: ToastType
+    type: ToastType,
+    font: NSFont
 ) {
     DispatchQueue.main.async {
         guard let window = NSApp.keyWindow ?? NSApp.windows.first(where: { $0.isVisible }),
               let containerView = window.contentView else { return }
 
-        let toast = ToastView(message: message)
+        let toast = ToastView(message: message, font: font)
         let presenter = MacToastPresenter(
             toast: toast,
             containerView: containerView,
@@ -625,35 +705,77 @@ private func presentToast(
 // MARK: - AppKit Extensions
 
 public extension NSView {
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
     func sbShowToast(
         message: String,
         duration: ToastDuration = .short,
         isShowTop: Bool = false,
         type: ToastType = .positive
     ) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
+    /// 현재 윈도우에 토스트를 표시합니다.
+    /// - Parameters:
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: NSFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 
 public extension NSViewController {
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
     func sbShowToast(
         message: String,
         duration: ToastDuration = .short,
         isShowTop: Bool = false,
         type: ToastType = .positive
     ) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
+    /// 현재 윈도우에 토스트를 표시합니다.
+    /// - Parameters:
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: NSFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 
 public extension View {
+    /// 현재 윈도우에 기본 폰트로 토스트를 표시합니다.
     func sbShowToast(
         message: String,
         duration: ToastDuration = .short,
         isShowTop: Bool = false,
         type: ToastType = .positive
     ) {
-        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type)
+        sbShowToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: ToastView.defaultFont)
+    }
+
+    /// 현재 윈도우에 토스트를 표시합니다.
+    /// - Parameters:
+    ///   - font: 메시지에 사용할 폰트. 기본값은 14pt Medium 시스템 폰트입니다.
+    func sbShowToast(
+        message: String,
+        duration: ToastDuration = .short,
+        isShowTop: Bool = false,
+        type: ToastType = .positive,
+        font: NSFont = ToastView.defaultFont
+    ) {
+        presentToast(message: message, duration: duration, isShowTop: isShowTop, type: type, font: font)
     }
 }
 #endif
