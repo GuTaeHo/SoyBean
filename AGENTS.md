@@ -36,6 +36,7 @@ SoyBean
 - `Log` wrappers around OSLog
 - Foundation and Swift standard-library extensions
 - Combine helpers and cancellable storage
+- Concurrency helpers such as the `EventLimiter` actor
 - iOS-only keyboard publishers, guarded with `#if os(iOS)`
 
 Keep this target independent of `SoyBeanUI` and `SoyBeanUtil`.

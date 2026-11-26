@@ -51,7 +51,7 @@ targets: [
 | 제품 | 역할 | 상세 문서 |
 | --- | --- | --- |
 | `SoyBean` | 아래 세 모듈을 다시 내보내는 통합 모듈 | 이 README |
-| `SoyBeanCore` | 오류, 로깅, Foundation·Swift·Combine 확장 | [SoyBeanCore](Documentation/SoyBeanCore.md) |
+| `SoyBeanCore` | 오류, 로깅, Foundation·Swift·Combine 확장, 동시성 보조 기능 | [SoyBeanCore](Documentation/SoyBeanCore.md) |
 | `SoyBeanUI` | SwiftUI 컴포넌트, 폰트, UIKit·AppKit 보조 기능 | [SoyBeanUI](Documentation/SoyBeanUI.md) |
 | `SoyBeanUtil` | 포맷, 검증, 디코딩, Keychain 및 앱 유틸리티 | [SoyBeanUtil](Documentation/SoyBeanUtil.md) |
 

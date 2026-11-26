@@ -108,6 +108,24 @@ publisher
     .store(in: &viewModel.cancellables)
 ```
 
+## 동시성
+
+| API | 설명 | 플랫폼 |
+| --- | --- | --- |
+| `EventLimiter` | 인스턴스마다 이벤트 제한 상태를 가지는 actor입니다. | 전체 |
+| `EventLimiter.execute(type:duration:_:)` | `.throttle`은 첫 이벤트만 즉시 실행하고 `duration` 동안 나머지를 버리며, `.debounce`는 마지막 이벤트 후 `duration` 동안 조용할 때 마지막 작업만 실행합니다. | 전체 |
+| `EventLimiter.cancel()` | 진행 중인 대기를 취소하고 예약된 debounce 작업을 버립니다. | 전체 |
+
+```swift
+private let searchLimiter = EventLimiter()
+
+func keywordChanged(_ keyword: String) {
+    searchLimiter.execute(type: .debounce, duration: 0.3) {
+        await self.search(keyword)
+    }
+}
+```
+
 ## 관련 문서
 
 - [SoyBeanUI](SoyBeanUI.md)
