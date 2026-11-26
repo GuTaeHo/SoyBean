@@ -49,6 +49,9 @@ public class FormatUtil {
         
         if let date = baseFormatter.date(from: date) {
             let dateFormatter = DateFormatter()
+            dateFormatter.locale = baseFormatter.locale
+            dateFormatter.calendar = baseFormatter.calendar
+            dateFormatter.timeZone = baseFormatter.timeZone
             dateFormatter.dateFormat = format.toFormat
             return dateFormatter.string(from: date)
         }
