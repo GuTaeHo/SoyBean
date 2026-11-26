@@ -88,13 +88,15 @@ Form {
 | `ToastDuration.long` | 6초 동안 표시합니다. | iOS, macOS |
 | `ToastType.positive` | 긍정 피드백을 표현합니다. iOS에서는 성공 햅틱이 발생합니다. | iOS, macOS |
 | `ToastType.negative` | 흔들림 오류 피드백을 표현합니다. iOS에서는 오류 햅틱도 발생합니다. | iOS, macOS |
-| `ToastView.init(message:)` | 플랫폼 네이티브 Toast 뷰를 직접 생성합니다. | iOS, macOS |
-| `sbShowToast(...)` | 중앙 또는 상단 Toast를 표시하고 자동 제거합니다. | iOS, macOS |
+| `ToastView.init(message:font:)` | 플랫폼 네이티브 Toast 뷰를 직접 생성합니다. | iOS, macOS |
+| `sbShowToast(message:duration:isShowTop:type:font:)` | 중앙 또는 상단 Toast를 표시하고 자동 제거합니다. | iOS, macOS |
 
 `sbShowToast`는 다음 타입에서 제공됩니다.
 
 - iOS: `UIView`, `UIViewController`, SwiftUI `View`
 - macOS: `NSView`, `NSViewController`, SwiftUI `View`
+
+`font`에는 iOS에서 `UIFont`, macOS에서 `NSFont`를 전달합니다. 토스트를 표시하거나 `ToastView`를 직접 생성할 때 `font`를 생략하면 14pt Medium 시스템 폰트를 사용합니다.
 
 SwiftUI API는 새 View를 반환하는 modifier가 아니라 표시 동작을 실행하는 메서드이므로 버튼 액션 등의 실행 시점에 호출합니다.
 
