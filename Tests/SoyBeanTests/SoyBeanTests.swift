@@ -158,4 +158,78 @@ final class SoybeanTests: XCTestCase {
         XCTAssertNil(weakOwner)
         withExtendedLifetime(cancellable) { }
     }
+
+    func testSharedDateFormatterIgnoresDeviceLocaleAndCalendar() throws {
+        let formatter = DateFormatter.shared
+
+        XCTAssertEqual(formatter.locale.identifier, "en_US_POSIX")
+        XCTAssertEqual(formatter.calendar.identifier, .gregorian)
+        let date = try XCTUnwrap(formatter.date(from: "2026-09-21 15:30:05"))
+        XCTAssertEqual(formatter.string(from: date), "2026-09-21 15:30:05")
+    }
+
+    func testFormatDateKeepsGregorianYear() throws {
+        XCTAssertEqual(try FormatUtil.formatDate("2026-09-21 15:30:05", to: .yy_Dot_MM_Dot_dd), "26.09.21")
+    }
+
+    func testEventLimiterDebounceRunsOnlyLastEvent() async throws {
+        let limiter = EventLimiter()
+        let recorder = TestEventRecorder()
+
+        for value in 1...3 {
+            limiter.execute(type: .debounce, duration: 0.1) { await recorder.append(value) }
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        try await Task.sleep(nanoseconds: 300_000_000)
+
+        let values = await recorder.values
+        XCTAssertEqual(values, [3])
+    }
+
+    func testEventLimiterThrottleRunsFirstEventOnly() async throws {
+        let limiter = EventLimiter()
+        let recorder = TestEventRecorder()
+
+        for value in 1...3 {
+            limiter.execute(type: .throttle, duration: 0.3) { await recorder.append(value) }
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        try await Task.sleep(nanoseconds: 100_000_000)
+
+        let values = await recorder.values
+        XCTAssertEqual(values, [1])
+    }
+
+    func testAttributedStringBuilderCombinesDefaultAndPieceAttributes() throws {
+        let attributed: NSAttributedString = try XCTUnwrap(
+            AttributedStringBuilder
+                .factory(default: [.kerning(1), .lineSpacing(4)])
+                .text("가")
+                .space()
+                .text("나", attributes: [.kerning(2)])
+                .build()
+        )
+
+        XCTAssertEqual(attributed.string, "가 나")
+        XCTAssertEqual(attributed.attribute(.kern, at: 0, effectiveRange: nil) as? CGFloat, 1)
+        XCTAssertEqual(attributed.attribute(.kern, at: 2, effectiveRange: nil) as? CGFloat, 2)
+        let paragraphStyle = attributed.attribute(.paragraphStyle, at: 0, effectiveRange: nil) as? NSParagraphStyle
+        XCTAssertEqual(paragraphStyle?.lineSpacing, 4)
+    }
+
+    func testAttributedStringBuilderReturnsIndependentCopy() throws {
+        let builder = AttributedStringBuilder.factory().text("가")
+        let first: NSAttributedString = try XCTUnwrap(builder.build())
+        builder.text("나")
+
+        XCTAssertEqual(first.string, "가")
+    }
+}
+
+private actor TestEventRecorder {
+    private(set) var values: [Int] = []
+
+    func append(_ value: Int) {
+        values.append(value)
+    }
 }
