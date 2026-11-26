@@ -32,7 +32,7 @@ SoyBean은 Apple 플랫폼 앱에서 반복적으로 사용하는 확장, 로깅
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "2.0.3")
+    .package(url: "https://github.com/GuTaeHo/SoyBean.git", from: "2.0.4")
 ],
 targets: [
     .target(
@@ -44,7 +44,7 @@ targets: [
 ]
 ```
 
-예시는 현재 저장소의 최신 태그인 `2.0.3`을 기준으로 합니다.
+예시는 현재 저장소의 최신 태그인 `2.0.4`를 기준으로 합니다.
 
 ## 제공 제품
 
@@ -167,6 +167,14 @@ view.sbShowToast(
 Toast는 iOS의 `UIView`·`UIViewController`·SwiftUI `View`와 macOS의 `NSView`·`NSViewController`·SwiftUI `View`에서 사용할 수 있습니다. `.negative` 타입에는 흔들림 효과가 적용됩니다. 햅틱은 iOS에서만 발생합니다. `font`를 생략하면 14pt Medium 시스템 폰트를 사용합니다.
 
 `.short`는 3초, `.long`은 6초, `.custom(초)`는 지정한 시간 동안 표시합니다. `.infinity`는 토스트의 닫기 버튼을 누를 때까지 표시합니다. 테마는 `.light`·`.dark`로 고정할 수 있고, 기본값인 `.system`은 현재 화면과 반대 밝기의 블러를 적용합니다. 토스트 너비는 내용에 맞춰 조절되며 iPad에서는 최대 400pt입니다.
+
+iOS에서는 `UIWindow`에 모션을 지정할 수 있습니다. `.dropFromTop`은 물방울처럼 내려오고 등장 동작을 역재생해 위로 퇴장합니다. `.foldAtCenter`는 화면 중앙에서 펼쳐지고 같은 중심으로 접힙니다. 동작 줄이기를 켜면 페이드로 표시합니다.
+
+```swift
+let toast = window.sbShowToast(message: "저장되었습니다.", motion: .dropFromTop, theme: .light)
+```
+
+반환된 `ToastView`에서 `textColor`를 지정하거나 `removeFromSuperview()`로 바로 닫을 수 있습니다.
 
 SwiftUI 로딩·키보드 대응·검증 피드백과 iOS 공유 화면·캘린더 내보내기는 [SoyBeanUI 전체 기능](Documentation/SoyBeanUI.md), multipart 본문과 알림 첨부 다운로드는 [SoyBeanUtil 전체 기능](Documentation/SoyBeanUtil.md)에서 예제를 확인할 수 있습니다.
 

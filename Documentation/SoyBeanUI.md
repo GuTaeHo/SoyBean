@@ -96,10 +96,14 @@ Form {
 | `ToastType.negative` | 흔들림 오류 피드백을 표현합니다. iOS에서는 오류 햅틱도 발생합니다. | iOS, macOS |
 | `ToastView.init(message:font:theme:)` | 플랫폼 네이티브 Toast 뷰를 직접 생성합니다. | iOS, macOS |
 | `sbShowToast(message:duration:isShowTop:type:font:theme:)` | 중앙 또는 상단 Toast를 표시합니다. | iOS, macOS |
+| `UIWindow.sbShowToast(message:motion:duration:type:font:theme:)` | 지정한 창에 Toast를 표시하고 해당 `ToastView`를 반환합니다. | iOS |
+| `ToastMotion.dropFromTop` | 안전 영역 상단에 낙하해 안착하고, 등장 동작을 역재생해 퇴장합니다. | iOS |
+| `ToastMotion.foldAtCenter` | 화면 중앙에서 펼쳐지고 본문을 먼저 흐리며 같은 중심으로 접힙니다. | iOS |
+| `ToastView.textColor` | 글자와 닫기 버튼의 색상을 지정합니다. `nil`은 선택한 테마의 글자색을 적용합니다. | iOS |
 
 `sbShowToast`는 다음 타입에서 제공됩니다.
 
-- iOS: `UIView`, `UIViewController`, SwiftUI `View`
+- iOS: `UIView`, `UIViewController`, SwiftUI `View` 및 `UIWindow`의 모션 지정 오버로드
 - macOS: `NSView`, `NSViewController`, SwiftUI `View`
 
 `font`에는 iOS에서 `UIFont`, macOS에서 `NSFont`를 전달합니다. 토스트를 표시하거나 `ToastView`를 직접 생성할 때 `font`를 생략하면 14pt Medium 시스템 폰트를 사용합니다.
@@ -107,6 +111,8 @@ Form {
 토스트 너비는 가장 긴 줄과 닫기 버튼, 좌우 여백에 맞춰 조절합니다. 가용 너비에서 줄바꿈하고, iPad에서는 400pt를 상한으로 적용합니다. 모서리 반경은 줄 수와 관계없이 26pt입니다.
 
 `.infinity`의 20pt 닫기 아이콘은 첫 줄의 세로 중앙에 맞추며, 클릭 영역은 36×36pt입니다.
+
+`UIWindow`에서 모션을 지정한 경우 동작 줄이기에 따라 페이드로 표시합니다. 활성 창에서 선택한 모션이 끝날 때 `ToastType`에 해당하는 햅틱이 발생합니다.
 
 SwiftUI API는 새 View를 반환하는 modifier가 아니라 표시 동작을 실행하는 메서드이므로 버튼 액션 등의 실행 시점에 호출합니다.
 

@@ -90,6 +90,13 @@ public final class ToastView: UIView {
     private var closeButton: UIButton?
     fileprivate var topPresenter: TopToastPresenter?
 
+    /// 본문과 닫기 버튼의 색상을 지정합니다. `nil`이면 테마의 글자색을 사용합니다.
+    public var textColor: UIColor? {
+        didSet { applyTextColor() }
+    }
+
+    var messageLayer: CALayer { label.layer }
+
     private let label: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -196,7 +203,12 @@ public final class ToastView: UIView {
     private func applyTheme() {
         let usesLightAppearance = theme.usesLightAppearance(systemIsDark: traitCollection.userInterfaceStyle == .dark)
         blurView.effect = UIBlurEffect(style: usesLightAppearance ? .systemMaterialLight : .systemMaterialDark)
-        label.textColor = usesLightAppearance ? .black : .white
+        applyTextColor()
+    }
+
+    private func applyTextColor() {
+        let usesLightAppearance = theme.usesLightAppearance(systemIsDark: traitCollection.userInterfaceStyle == .dark)
+        label.textColor = textColor ?? (usesLightAppearance ? .black : .white)
         closeButton?.tintColor = label.textColor
     }
 
@@ -370,6 +382,92 @@ private func fadeOut(_ toast: ToastView, delay: TimeInterval) {
     }
 }
 
+public extension UIWindow {
+    /// 지정한 창에 모션을 선택해 토스트를 표시하고, 화면에서 제거할 수 있는 뷰를 반환합니다.
+    @discardableResult
+    func sbShowToast(
+        message: String, motion: ToastMotion, duration: ToastDuration = .short,
+        type: ToastType = .positive, font: UIFont = ToastView.defaultFont, theme: ToastTheme = .system
+    ) -> ToastView {
+        let toast = ToastView(message: message, font: font, theme: theme)
+        let moves = !UIAccessibility.isReduceMotionEnabled && (motion == .foldAtCenter || isKeyWindow)
+        let safeArea = safeAreaLayoutGuide
+        let inset: CGFloat = moves ? ToastLayout.windowHorizontalInset : 24
+        var widthConstraints = [toast.widthAnchor.constraint(lessThanOrEqualTo: safeArea.widthAnchor, constant: -2 * inset)]
+        if moves && traitCollection.userInterfaceIdiom == .pad {
+            widthConstraints.append(toast.widthAnchor.constraint(lessThanOrEqualToConstant: ToastLayout.tabletMaximumWidth))
+        }
+
+        if motion == .dropFromTop && moves {
+            let presenter = TopToastPresenter(toast: toast, duration: duration.seconds, type: type, drops: true)
+            toast.topPresenter = presenter
+            presenter.present(in: self, widthConstraints: widthConstraints)
+            return toast
+        }
+
+        let verticalPosition: NSLayoutConstraint
+        if motion == .dropFromTop {
+            verticalPosition = toast.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 16)
+        } else if moves && isKeyWindow {
+            let keyboard = keyboardLayoutGuide
+            layoutIfNeeded()
+            let keyboardTop = keyboard.layoutFrame.minY
+            let safeFrame = safeArea.layoutFrame
+            let bottom = keyboardTop > safeFrame.minY && keyboardTop < safeFrame.maxY ? keyboardTop : bounds.maxY
+            let offset = (safeFrame.minY + bottom) / 2 - bounds.midY
+            verticalPosition = toast.centerYAnchor.constraint(equalTo: centerYAnchor, constant: offset)
+        } else {
+            verticalPosition = toast.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor)
+        }
+        toast.translatesAutoresizingMaskIntoConstraints = false
+        toast.alpha = moves ? 1 : 0
+        addSubview(toast)
+        NSLayoutConstraint.activate([toast.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor), verticalPosition] + widthConstraints)
+        presentToastMotion(toast, motion: moves ? motion : nil, duration: duration.seconds, type: type)
+        return toast
+    }
+}
+
+@MainActor
+private func presentToastMotion(_ toast: ToastView, motion: ToastMotion?, duration: TimeInterval?, type: ToastType) {
+    var hasArrived = false
+    var dismissAfterArrival = false
+    let dismiss = { [weak toast] in
+        guard let toast, toast.superview != nil else { return }
+        guard hasArrived else {
+            dismissAfterArrival = true
+            return
+        }
+        if let motion {
+            motion.play(on: toast, exiting: true) { [weak toast] in toast?.removeFromSuperview() }
+        } else {
+            UIView.animate(withDuration: 0.2) { toast.alpha = 0 } completion: { _ in toast.removeFromSuperview() }
+        }
+    }
+    if duration == nil { toast.enableManualDismiss(dismiss) }
+    toast.superview?.layoutIfNeeded()
+
+    let arrived = { [weak toast] in
+        guard let toast, toast.superview != nil else { return }
+        hasArrived = true
+        if motion != nil && toast.window?.isKeyWindow == true {
+            HapticManager.shared.start(.notification(type == .positive ? .success : .error))
+        }
+        if dismissAfterArrival {
+            dismiss()
+        } else if let duration {
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) { dismiss() }
+        }
+    }
+    if let motion {
+        motion.play(on: toast, exiting: false, completion: arrived)
+    } else {
+        UIView.animate(withDuration: 0.2) { toast.alpha = 1 } completion: { finished in
+            if finished { arrived() }
+        }
+    }
+}
+
 // MARK: - TopToastPresenter
 // isShowTop = true 일 때 전용: 위에서 내려오는 애니메이션 + 터치 홀드 + 위로 스와이프 해제
 
@@ -378,8 +476,11 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
     private weak var toast: ToastView?
     private let duration: TimeInterval?
     private let type: ToastType
+    private let drops: Bool
     private var topConstraint: NSLayoutConstraint?
     private var isDismissing = false
+    private var hasArrived = false
+    private var dragStart: CGFloat = 0
 
     /// 토스트가 완전히 들어왔을 때의 top 상수
     private var shownTopConstant: CGFloat = 0
@@ -393,10 +494,11 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
     /// 타이머가 만료됐지만 터치 중이어서 대기 중인지
     private var pendingDismiss = false
 
-    init(toast: ToastView, duration: TimeInterval?, type: ToastType) {
+    init(toast: ToastView, duration: TimeInterval?, type: ToastType, drops: Bool = false) {
         self.toast = toast
         self.duration = duration
         self.type = type
+        self.drops = drops
     }
 
     deinit {
@@ -409,11 +511,12 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
         toast.translatesAutoresizingMaskIntoConstraints = false
         window.addSubview(toast)
 
-        let topConstraint = toast.topAnchor.constraint(equalTo: window.topAnchor, constant: hiddenTopConstant)
+        let topAnchor = drops ? window.safeAreaLayoutGuide.topAnchor : window.topAnchor
+        let topConstraint = toast.topAnchor.constraint(equalTo: topAnchor, constant: drops ? 16 : hiddenTopConstant)
         self.topConstraint = topConstraint
 
         NSLayoutConstraint.activate([
-            toast.centerXAnchor.constraint(equalTo: window.centerXAnchor),
+            toast.centerXAnchor.constraint(equalTo: drops ? window.safeAreaLayoutGuide.centerXAnchor : window.centerXAnchor),
             topConstraint,
         ] + widthConstraints)
 
@@ -421,6 +524,19 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
 
         // 토스트의 최종 높이로 화면 밖 시작 위치를 계산한다.
         window.layoutIfNeeded()
+
+        if drops {
+            shownTopConstant = topConstraint.constant
+            ToastMotion.dropFromTop.play(on: toast, exiting: false) { [weak self] in
+                guard let self, let toast = self.toast, toast.superview != nil else { return }
+                self.hasArrived = true
+                if toast.window?.isKeyWindow == true {
+                    HapticManager.shared.start(.notification(self.type == .positive ? .success : .error))
+                }
+                if self.pendingDismiss { self.dismiss() } else { self.scheduleDismiss() }
+            }
+            return
+        }
 
         let safeTop = window.safeAreaInsets.top
         shownTopConstant = safeTop + 16
@@ -452,6 +568,7 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
 
     private func scheduleDismiss() {
         guard let duration, !isDismissing else { return }
+        if drops && (!hasArrived || isTouching) { return }
         cancelTimer()
         dismissTimer = Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { [weak self] _ in
             guard let self else { return }
@@ -472,8 +589,16 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
 
     private func dismiss() {
         guard !isDismissing, let toast, let window = toast.window else { return }
+        if drops && !hasArrived {
+            pendingDismiss = true
+            return
+        }
         isDismissing = true
         cancelTimer()
+        if drops {
+            ToastMotion.dropFromTop.play(on: toast, exiting: true) { [weak toast] in toast?.removeFromSuperview() }
+            return
+        }
         topConstraint?.constant = hiddenTopConstant
         UIView.animate(withDuration: 0.3, delay: 0, options: [.beginFromCurrentState, .curveEaseIn]) {
             window.layoutIfNeeded()
@@ -521,12 +646,20 @@ fileprivate final class TopToastPresenter: NSObject, UIGestureRecognizerDelegate
 
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
         guard !isDismissing, let topConstraint, let window = toast?.window else { return }
+        if drops && !hasArrived { return }
         let translation = gesture.translation(in: window)
 
         switch gesture.state {
+        case .began where drops:
+            guard let toast else { return }
+            let visibleY = toast.layer.presentation()?.frame.minY ?? toast.frame.minY
+            dragStart = topConstraint.constant - shownTopConstant + visibleY - toast.frame.minY
+            toast.layer.removeAllAnimations()
+            topConstraint.constant = shownTopConstant + min(dragStart, 0)
+            window.layoutIfNeeded()
         case .changed:
             // 위쪽 방향 드래그만 반영 (아래로는 저항)
-            let offset = min(translation.y, 0)
+            let offset = min(dragStart + translation.y, 0)
             topConstraint.constant = shownTopConstant + offset
             window.layoutIfNeeded()
 
