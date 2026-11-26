@@ -62,7 +62,7 @@ Log.custom(category: "Network", level: .error, "요청 실패")
 | `Date` | `timeDifferenceToSecond(_:)` | 수신 날짜와 비교 날짜의 차이를 초 단위로 반환합니다. |
 | `Date` | `compareDates(_:targetDate:format:)` | 문자열 날짜 두 개를 변환하여 비교합니다. |
 | `Date` | `remainingDays(_:format:)` | 현재부터 대상 날짜까지 남은 일수를 반환합니다. |
-| `DateFormatter` | `shared` | `yyyy-MM-dd HH:mm:ss` 공통 포맷터입니다. 속성을 변경하면 안 됩니다. |
+| `DateFormatter` | `shared` | `yyyy-MM-dd HH:mm:ss` 공통 포맷터입니다. `en_US_POSIX` locale과 그레고리력을 쓰고 시간대는 기기를 따릅니다. 속성을 변경하면 안 됩니다. |
 | `Bundle` | `AppInstallEnvironment` | 직접 설치, TestFlight 및 App Store 설치를 구분합니다. |
 | `Bundle.AppInstallEnvironment` | `name` | 설치 환경을 표시용 한글 이름으로 반환합니다. |
 | `Bundle` | `appInstallEnvironment` | 현재 앱의 설치 환경을 반환합니다. |
